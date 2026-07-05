@@ -1,13 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
 
-const url = import.meta.env.VITE_SUPABASE_URL;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// The Supabase URL and anon key are PUBLIC values by design — they ship in
+// the browser bundle either way, and Row Level Security protects the data.
+// Baked-in fallbacks keep the deployed site working even when the hosting
+// platform has no VITE_* env vars configured; env vars override when set.
+const FALLBACK_URL = "https://uootbtclscecwaumcelj.supabase.co";
+const FALLBACK_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvb3RidGNsc2NlY3dhdW1jZWxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxOTgxMTYsImV4cCI6MjA5ODc3NDExNn0.RtXCDEor2GcVMG0PASHCVTclLmYHKONI7I1We3gibC4";
 
-if (!url || !anonKey) {
-  throw new Error(
-    "Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. Copy .env.example to .env and fill it in."
-  );
-}
+const url = import.meta.env.VITE_SUPABASE_URL || FALLBACK_URL;
+const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || FALLBACK_ANON_KEY;
 
 export const supabase = createClient(url, anonKey);
 
