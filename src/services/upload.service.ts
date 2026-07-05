@@ -30,7 +30,7 @@ export const UploadService = {
    */
   uploadToUrl(
     url: string,
-    file: File,
+    file: Blob,
     onProgress: (pct: number) => void
   ): UploadHandle {
     const xhr = new XMLHttpRequest();

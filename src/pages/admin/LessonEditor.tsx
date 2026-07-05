@@ -7,11 +7,13 @@ import { lessonSchema, type LessonInput } from "../../schemas/course.schema";
 import { LessonService } from "../../services/lessons.service";
 import { UploadService, type UploadHandle } from "../../services/upload.service";
 import { StorageService } from "../../services/storage.service";
+import { ensureFastStart } from "../../lib/faststart";
 import Spinner from "../../components/Spinner";
 import ErrorMessage from "../../components/ErrorMessage";
 
 type UploadState =
   | { phase: "idle" }
+  | { phase: "optimizing" }
   | { phase: "requesting" }
   | { phase: "uploading"; pct: number }
   | { phase: "saving" }
@@ -76,6 +78,12 @@ export default function LessonEditor() {
   }
 
   async function startUpload(file: File) {
+    // 0. Restructure the MP4 for instant streaming (moov → front). Screen
+    //    recorders put the metadata at the END, which makes playback take
+    //    ages to start over object storage.
+    setUpload({ phase: "optimizing" });
+    const { blob } = await ensureFastStart(file);
+
     setUpload({ phase: "requesting" });
     try {
       // 1. Ask the edge function (admin-only) for a presigned PUT URL.
@@ -87,7 +95,7 @@ export default function LessonEditor() {
 
       // 2. Upload the file straight to Contabo (browser → bucket, no server hop).
       setUpload({ phase: "uploading", pct: 0 });
-      const handle = UploadService.uploadToUrl(upload_url, file, (pct) =>
+      const handle = UploadService.uploadToUrl(upload_url, blob, (pct) =>
         setUpload({ phase: "uploading", pct })
       );
       uploadHandleRef.current = handle;
@@ -140,7 +148,11 @@ export default function LessonEditor() {
     }
   }
 
-  const uploading = upload.phase === "requesting" || upload.phase === "uploading" || upload.phase === "saving";
+  const uploading =
+    upload.phase === "optimizing" ||
+    upload.phase === "requesting" ||
+    upload.phase === "uploading" ||
+    upload.phase === "saving";
 
   return (
     <div className="page page-narrow">
@@ -193,6 +205,9 @@ export default function LessonEditor() {
 
         {uploading ? (
           <div className="upload-progress">
+            {upload.phase === "optimizing" && (
+              <Spinner label="Optimizing video for instant streaming…" />
+            )}
             {upload.phase === "requesting" && <Spinner label="Preparing secure upload…" />}
             {upload.phase === "uploading" && (
               <>

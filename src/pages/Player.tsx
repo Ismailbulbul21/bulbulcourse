@@ -263,6 +263,7 @@ export default function Player() {
                   controls
                   controlsList="nodownload"
                   playsInline
+                  preload="auto"
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
                   onEnded={handleEnded}
