@@ -409,13 +409,47 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .syllabus-module summary::-webkit-details-marker { display: none; }
 .syllabus-module summary::before { content: "▸ "; color: var(--primary); margin-right: 0.4rem; }
 .syllabus-module[open] summary::before { content: "▾ "; }
+/* Whole lesson row = one big click target */
 .syllabus-lesson {
-  display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
-  padding: 0.6rem 1.1rem; border-top: 1px solid var(--border); font-size: 0.93rem;
+  display: flex; align-items: center; gap: 0.85rem;
+  width: 100%;
+  padding: 0.7rem 1.1rem;
+  border: none; border-top: 1px solid var(--border);
+  background: transparent;
+  font: inherit; font-size: 0.94rem; text-align: left;
+  cursor: pointer;
+  transition: background 0.13s ease;
 }
-.syllabus-lesson-title { display: flex; align-items: center; gap: 0.55rem; }
-.syllabus-lesson-icon { font-size: 0.8rem; }
-.syllabus-lesson-meta { display: flex; align-items: center; gap: 0.6rem; }
+.syllabus-lesson:hover { background: var(--primary-soft); }
+.syllabus-lesson:hover .syllabus-lesson-title { color: var(--primary-deep); }
+.syllabus-lesson:hover .syllabus-go { transform: translateX(2px); }
+
+.play-chip {
+  width: 32px; height: 32px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--grad);
+  color: #fff; font-size: 0.72rem;
+  box-shadow: 0 3px 8px rgba(95, 91, 241, 0.32);
+  padding-left: 2px;
+}
+.play-chip-locked { background: #eceef5; color: var(--muted); box-shadow: none; padding-left: 0; }
+
+.syllabus-lesson-title {
+  flex: 1; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap;
+  transition: color 0.13s ease;
+}
+.syllabus-lesson-right {
+  display: flex; align-items: center; gap: 0.8rem;
+  color: var(--muted); font-size: 0.85rem; white-space: nowrap;
+}
+.syllabus-go {
+  color: var(--primary-deep); font-weight: 800;
+  transition: transform 0.13s ease;
+}
+.syllabus-lesson-locked:hover { background: var(--warn-bg); }
+.syllabus-locktext { color: var(--warn); font-weight: 700; }
 
 /* ── Auth pages ────────────────────────────────────────────── */
 .auth-page { display: flex; justify-content: center; padding: 3rem 0; }

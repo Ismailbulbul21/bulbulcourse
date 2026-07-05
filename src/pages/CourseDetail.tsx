@@ -9,6 +9,7 @@ import ErrorMessage from "../components/ErrorMessage";
 
 export function formatDuration(totalSeconds: number): string {
   if (!totalSeconds || totalSeconds <= 0) return "";
+  if (totalSeconds < 60) return `${Math.max(1, Math.round(totalSeconds))}s`;
   const h = Math.floor(totalSeconds / 3600);
   const m = Math.round((totalSeconds % 3600) / 60);
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -108,31 +109,50 @@ export default function CourseDetail() {
                     {mod.lessons.map((lesson) => {
                       const watchable = canWatchEverything || lesson.is_preview;
                       return (
-                        <li key={lesson.id} className="syllabus-lesson">
-                          <span className="syllabus-lesson-title">
-                            <span className="syllabus-lesson-icon" aria-hidden>
+                        <li key={lesson.id}>
+                          {/* The WHOLE row is the click target — tap anywhere
+                              to watch (or to unlock when locked). */}
+                          <button
+                            type="button"
+                            className={`syllabus-lesson ${
+                              watchable ? "" : "syllabus-lesson-locked"
+                            }`}
+                            onClick={() =>
+                              watchable ? goToLesson(lesson.id) : goToCheckout()
+                            }
+                            title={
+                              watchable
+                                ? "Watch this lesson"
+                                : "Buy the course to unlock this lesson"
+                            }
+                          >
+                            <span
+                              className={`play-chip ${
+                                watchable ? "" : "play-chip-locked"
+                              }`}
+                              aria-hidden
+                            >
                               {watchable ? "▶" : "🔒"}
                             </span>
-                            {lesson.title}
-                          </span>
-                          <span className="syllabus-lesson-meta">
-                            {lesson.duration_seconds > 0 && (
-                              <span className="muted">
-                                {formatDuration(lesson.duration_seconds)}
-                              </span>
-                            )}
-                            {watchable && (
-                              <button
-                                type="button"
-                                className="btn btn-ghost btn-sm"
-                                onClick={() => goToLesson(lesson.id)}
-                              >
-                                {lesson.is_preview && !canWatchEverything
-                                  ? "Free preview"
-                                  : "Watch"}
-                              </button>
-                            )}
-                          </span>
+                            <span className="syllabus-lesson-title">
+                              {lesson.title}
+                              {lesson.is_preview && !canWatchEverything && (
+                                <span className="badge badge-preview">
+                                  Free preview
+                                </span>
+                              )}
+                            </span>
+                            <span className="syllabus-lesson-right">
+                              {lesson.duration_seconds > 0 && (
+                                <span>{formatDuration(lesson.duration_seconds)}</span>
+                              )}
+                              {watchable ? (
+                                <span className="syllabus-go">Watch ›</span>
+                              ) : (
+                                <span className="syllabus-locktext">Unlock</span>
+                              )}
+                            </span>
+                          </button>
                         </li>
                       );
                     })}
