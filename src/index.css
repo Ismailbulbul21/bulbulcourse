@@ -504,12 +504,27 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .player-breadcrumb { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; gap: 1rem; flex-wrap: wrap; }
 .player-breadcrumb a { font-weight: 700; }
 .video-frame {
+  position: relative;
   background: #0b0c14;
   border-radius: var(--radius-lg);
   overflow: hidden;
   aspect-ratio: 16/9;
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-lg);
+}
+/* Moving identity watermark — makes screen recordings traceable */
+.video-watermark {
+  position: absolute;
+  z-index: 5;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  transition: top 1.4s ease-in-out, left 1.4s ease-in-out;
 }
 .video-frame video { width: 100%; height: 100%; }
 .video-empty { color: #fff; text-align: center; padding: 1rem; width: 100%; }

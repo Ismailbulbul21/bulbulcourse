@@ -93,6 +93,37 @@ Deno.serve(async (req: Request) => {
       return fail(403, "forbidden", "Purchase this course to watch this lesson.");
     }
 
+    // ── One active device per account (admins exempt) ──────────────────
+    // The newest device to open the app claims the slot (user_devices row);
+    // playback URLs are only signed for that device.
+    if (!isAdmin) {
+      const deviceId = typeof body?.device_id === "string" ? body.device_id : "";
+      if (!deviceId) {
+        return fail(403, "device_required", "Please refresh the page and try again.");
+      }
+      const { data: device } = await admin
+        .from("user_devices")
+        .select("device_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!device) {
+        await admin.from("user_devices").upsert(
+          {
+            user_id: user.id,
+            device_id: deviceId,
+            user_agent: req.headers.get("user-agent") ?? "",
+          },
+          { onConflict: "user_id" }
+        );
+      } else if (device.device_id !== deviceId) {
+        return fail(
+          403,
+          "device_conflict",
+          "Your account is active on another device. Videos play on one device at a time — refresh this page to make this your active device."
+        );
+      }
+    }
+
     const endpoint = Deno.env.get("CONTABO_ENDPOINT");
     const bucket = Deno.env.get("CONTABO_BUCKET");
     const accessKey = Deno.env.get("CONTABO_ACCESS_KEY");
