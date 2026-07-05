@@ -8,7 +8,8 @@ import { supabase, toError } from "../lib/supabase";
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from ?? "/dashboard";
+  // Default landing after login is the course catalog, not My Learning.
+  const from = (location.state as { from?: string } | null)?.from ?? "/";
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {

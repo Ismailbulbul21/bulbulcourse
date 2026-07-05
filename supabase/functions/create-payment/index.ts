@@ -187,7 +187,7 @@ Deno.serve(async (req: Request) => {
           invoiceId: referenceId,
           amount,
           currency: course.currency ?? "USD",
-          description: `Coursada: ${String(course.title).slice(0, 80)}`,
+          description: `BulbulCourses: ${String(course.title).slice(0, 80)}`,
         },
       },
     };

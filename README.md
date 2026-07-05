@@ -1,4 +1,4 @@
-# Coursada — Online Course Platform
+# BulbulCourses — Online Course Platform
 
 Sell online courses securely: private videos on Contabo, payments with EVC Plus /
 ZAAD via WaafiPay, everything else on Supabase. Full specification: [PROMPT.md](PROMPT.md).

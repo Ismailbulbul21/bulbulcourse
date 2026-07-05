@@ -4,13 +4,7 @@ import { CourseService } from "../../services/courses.service";
 import { formatPrice } from "../../components/CourseCard";
 import Spinner from "../../components/Spinner";
 import ErrorMessage from "../../components/ErrorMessage";
-import type { Course, CourseStatus } from "../../types/db";
-
-const STATUS_LABEL: Record<CourseStatus, string> = {
-  draft: "Draft",
-  published: "Published",
-  archived: "Archived",
-};
+import type { Course } from "../../types/db";
 
 export default function AdminCourses() {
   const queryClient = useQueryClient();
@@ -38,7 +32,7 @@ export default function AdminCourses() {
     onSuccess: invalidate,
   });
 
-  if (coursesQuery.isPending) return <Spinner label="Loading courses…" />;
+  if (coursesQuery.isPending) return <Spinner label="Loading your studio…" />;
   if (coursesQuery.isError) {
     return (
       <ErrorMessage error={coursesQuery.error} onRetry={() => coursesQuery.refetch()} />
@@ -46,14 +40,34 @@ export default function AdminCourses() {
   }
 
   const courses = coursesQuery.data;
+  const published = courses.filter((c) => c.status === "published").length;
+  const drafts = courses.filter((c) => c.status === "draft").length;
 
   return (
     <div className="page">
-      <div className="page-header">
-        <h1>My Courses</h1>
-        <Link to="/admin/courses/new" className="btn btn-primary">
+      <div className="admin-hero">
+        <div>
+          <p className="wizard-step">Creator Studio</p>
+          <h1>My Courses</h1>
+        </div>
+        <Link to="/admin/courses/new" className="btn btn-primary btn-lg">
           + Create Course
         </Link>
+      </div>
+
+      <div className="stat-row">
+        <div className="stat-card">
+          <span className="stat-num">{courses.length}</span>
+          <span className="stat-label">Total courses</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-num">{published}</span>
+          <span className="stat-label">Published</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-num">{drafts}</span>
+          <span className="stat-label">Drafts</span>
+        </div>
       </div>
 
       {courses.length === 0 ? (
@@ -65,34 +79,38 @@ export default function AdminCourses() {
           </Link>
         </div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Course</th>
-              <th>Status</th>
-              <th>Price</th>
-              <th>Created</th>
-              <th className="admin-table-actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses.map((course) => (
-              <tr key={course.id}>
-                <td>
-                  <Link to={`/admin/courses/${course.id}`} className="admin-course-title">
-                    {course.title}
-                  </Link>
-                </td>
-                <td>
-                  <span className={`badge badge-${course.status}`}>
-                    {STATUS_LABEL[course.status]}
-                  </span>
-                </td>
-                <td>{formatPrice(course.price, course.currency)}</td>
-                <td>{new Date(course.created_at).toLocaleDateString()}</td>
-                <td className="admin-table-actions">
-                  <Link to={`/admin/courses/${course.id}`} className="btn btn-secondary btn-sm">
-                    Edit
+        <div className="admin-grid">
+          {courses.map((course) => (
+            <div key={course.id} className="admin-card">
+              <Link
+                to={`/admin/courses/${course.id}`}
+                className="admin-card-thumb"
+                title="Open editor"
+              >
+                {course.thumbnail_url ? (
+                  <img src={course.thumbnail_url} alt="" loading="lazy" />
+                ) : (
+                  <div className="thumb-placeholder" aria-hidden>
+                    {course.title.slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+                <span className={`badge badge-${course.status} admin-card-status`}>
+                  {course.status}
+                </span>
+              </Link>
+              <div className="admin-card-body">
+                <h3 className="admin-card-title">
+                  <Link to={`/admin/courses/${course.id}`}>{course.title}</Link>
+                </h3>
+                <p className="muted">
+                  {course.category} · {formatPrice(course.price, course.currency)}
+                </p>
+                <div className="admin-card-actions">
+                  <Link
+                    to={`/admin/courses/${course.id}`}
+                    className="btn btn-secondary btn-sm"
+                  >
+                    ✏️ Edit
                   </Link>
                   <button
                     type="button"
@@ -100,29 +118,25 @@ export default function AdminCourses() {
                     disabled={toggleStatus.isPending}
                     onClick={() => toggleStatus.mutate(course)}
                   >
-                    {course.status === "published" ? "Unpublish" : "Publish"}
+                    {course.status === "published" ? "Unpublish" : "🚀 Publish"}
                   </button>
                   <button
                     type="button"
                     className="btn btn-danger btn-sm"
                     disabled={softDelete.isPending}
                     onClick={() => {
-                      if (
-                        window.confirm(
-                          `Archive "${course.title}"? Students who bought it will lose access to the catalog listing.`
-                        )
-                      ) {
+                      if (window.confirm(`Archive "${course.title}"?`)) {
                         softDelete.mutate(course.id);
                       }
                     }}
                   >
-                    Delete
+                    🗑
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

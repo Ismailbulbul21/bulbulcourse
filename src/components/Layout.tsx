@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import Logo from "./Logo";
 
 export default function Layout() {
   const { user, profile, isAdmin, signOut } = useAuthStore();
@@ -14,7 +15,8 @@ export default function Layout() {
     <div className="app">
       <header className="navbar">
         <Link to="/" className="brand">
-          Coursada
+          <Logo size={30} />
+          <span className="brand-text">BulbulCourses</span>
         </Link>
         <nav className="nav-links">
           <NavLink to="/" end>
@@ -49,7 +51,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <footer className="footer">
-        © {new Date().getFullYear()} Coursada — learn anything, anywhere.
+        © {new Date().getFullYear()} BulbulCourses — learn anything, anywhere.
       </footer>
     </div>
   );

@@ -1,4 +1,4 @@
-# Coursada — Full Website Specification & Build Prompt
+# BulbulCourses — Full Website Specification & Build Prompt
 
 This document is the complete master specification for the Coursada online course
 platform. It is written so that an engineering team (or an AI agent) could rebuild
