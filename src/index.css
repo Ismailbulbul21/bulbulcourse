@@ -512,20 +512,6 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-lg);
 }
-/* Moving identity watermark — makes screen recordings traceable */
-.video-watermark {
-  position: absolute;
-  z-index: 5;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  pointer-events: none;
-  user-select: none;
-  white-space: nowrap;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-  transition: top 1.4s ease-in-out, left 1.4s ease-in-out;
-}
 .video-frame video { width: 100%; height: 100%; }
 .video-empty { color: #fff; text-align: center; padding: 1rem; width: 100%; }
 .video-empty .error-box { background: transparent; border: none; color: #fca5a5; }

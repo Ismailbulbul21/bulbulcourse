@@ -16,16 +16,7 @@ const SAVE_INTERVAL_MS = 10_000;
 export default function Player() {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId?: string }>();
   const navigate = useNavigate();
-  const { isAdmin, user, profile } = useAuthStore();
-
-  // Moving identity watermark: any screen recording carries WHO leaked it.
-  const [wmPos, setWmPos] = useState({ top: 8, left: 8 });
-  useEffect(() => {
-    const id = setInterval(() => {
-      setWmPos({ top: 6 + Math.random() * 74, left: 4 + Math.random() * 58 });
-    }, 8000);
-    return () => clearInterval(id);
-  }, []);
+  const { isAdmin } = useAuthStore();
 
   const courseQuery = useQuery({
     queryKey: ["course", courseId],
@@ -265,30 +256,19 @@ export default function Player() {
                   />
                 </div>
               ) : (
-                <>
-                  <video
-                    key={videoQuery.data.url}
-                    ref={videoRef}
-                    src={videoQuery.data.url}
-                    controls
-                    controlsList="nodownload noremoteplayback"
-                    disablePictureInPicture
-                    playsInline
-                    preload="auto"
-                    onTimeUpdate={handleTimeUpdate}
-                    onLoadedMetadata={handleLoadedMetadata}
-                    onEnded={handleEnded}
-                  />
-                  {user && (
-                    <div
-                      className="video-watermark"
-                      style={{ top: `${wmPos.top}%`, left: `${wmPos.left}%` }}
-                      aria-hidden
-                    >
-                      {profile?.full_name || "Student"} · {user.email}
-                    </div>
-                  )}
-                </>
+                <video
+                  key={videoQuery.data.url}
+                  ref={videoRef}
+                  src={videoQuery.data.url}
+                  controls
+                  controlsList="nodownload noremoteplayback"
+                  disablePictureInPicture
+                  playsInline
+                  preload="auto"
+                  onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={handleLoadedMetadata}
+                  onEnded={handleEnded}
+                />
               )}
             </div>
 
