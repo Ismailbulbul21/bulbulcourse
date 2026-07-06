@@ -1,6 +1,9 @@
-// create-upload-url — admin JWT → presigned Contabo PUT URL.
-// The browser uploads the video straight to Contabo with this URL and then
-// saves lessons.video_key. Contabo secrets never leave this function.
+// create-upload-url — admin JWT → presigned Contabo upload.
+// Small files get a single presigned PUT. Larger files get an S3 multipart
+// upload: the function initiates it server-side and returns presigned URLs
+// for every part (uploaded in parallel by the browser — much faster over
+// long-distance links) plus presigned complete/abort URLs.
+// Contabo secrets never leave this function.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { AwsClient } from "npm:aws4fetch@1.0.20";
 
@@ -23,6 +26,11 @@ function ok<T>(data: T): Response {
 function fail(status: number, code: string, message: string): Response {
   return json(status, { success: false, data: null, error: { code, message } });
 }
+
+const PART_SIZE = 16 * 1024 * 1024; // 16MB parts
+const MULTIPART_THRESHOLD = 24 * 1024 * 1024; // multipart above 24MB
+const MAX_PARTS = 1000; // ~15GB ceiling
+const URL_TTL = "21600"; // 6h — big uploads on slow links need time
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -58,6 +66,7 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => null);
     const lessonId = body?.lesson_id;
     const filename = body?.filename;
+    const size = Number(body?.size ?? 0);
     if (!lessonId || !filename) {
       return fail(400, "invalid_request", "lesson_id and filename are required.");
     }
@@ -74,12 +83,6 @@ Deno.serve(async (req: Request) => {
     const accessKey = Deno.env.get("CONTABO_ACCESS_KEY");
     const secretKey = Deno.env.get("CONTABO_SECRET_KEY");
     if (!endpoint || !bucket || !accessKey || !secretKey) {
-      console.error("Missing Contabo secrets:", {
-        hasEndpoint: !!endpoint,
-        hasBucket: !!bucket,
-        hasAccessKey: !!accessKey,
-        hasSecretKey: !!secretKey,
-      });
       return fail(
         500,
         "config_error",
@@ -98,15 +101,62 @@ Deno.serve(async (req: Request) => {
       service: "s3",
       region: Deno.env.get("CONTABO_REGION") ?? "default",
     });
+    const objectBase = `${endpoint.replace(/\/+$/, "")}/${bucket}/${videoKey}`;
 
-    const url = new URL(`${endpoint.replace(/\/+$/, "")}/${bucket}/${videoKey}`);
-    url.searchParams.set("X-Amz-Expires", "3600");
-    const signed = await aws.sign(new Request(url.toString(), { method: "PUT" }), {
-      aws: { signQuery: true },
+    async function presign(method: string, params: Record<string, string>) {
+      const u = new URL(objectBase);
+      for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+      u.searchParams.set("X-Amz-Expires", URL_TTL);
+      const signed = await aws.sign(new Request(u.toString(), { method }), {
+        aws: { signQuery: true },
+      });
+      return signed.url;
+    }
+
+    // ── Small file: single presigned PUT ──────────────────────────────
+    if (!size || size <= MULTIPART_THRESHOLD) {
+      const uploadUrl = await presign("PUT", {});
+      console.log("Presigned single upload:", { user: user.id, videoKey, size });
+      return ok({ mode: "single", upload_url: uploadUrl, video_key: videoKey });
+    }
+
+    // ── Large file: multipart with parallel parts ─────────────────────
+    const partCount = Math.ceil(size / PART_SIZE);
+    if (partCount > MAX_PARTS) {
+      return fail(400, "too_large", "Video is too large. Please compress it first.");
+    }
+
+    const initRes = await aws.fetch(`${objectBase}?uploads`, { method: "POST" });
+    const initXml = await initRes.text();
+    const uploadId = (initXml.match(/<UploadId>([^<]+)<\/UploadId>/) || [])[1];
+    if (!initRes.ok || !uploadId) {
+      console.error("Multipart initiate failed:", initRes.status, initXml.slice(0, 300));
+      return fail(500, "storage_error", "Could not start the upload. Please try again.");
+    }
+
+    const partUrls: string[] = [];
+    for (let n = 1; n <= partCount; n++) {
+      partUrls.push(
+        await presign("PUT", { partNumber: String(n), uploadId })
+      );
+    }
+    const completeUrl = await presign("POST", { uploadId });
+    const abortUrl = await presign("DELETE", { uploadId });
+
+    console.log("Presigned multipart upload:", {
+      user: user.id,
+      videoKey,
+      size,
+      parts: partCount,
     });
-
-    console.log("Presigned upload created:", { user: user.id, videoKey });
-    return ok({ upload_url: signed.url, video_key: videoKey });
+    return ok({
+      mode: "multipart",
+      video_key: videoKey,
+      part_size: PART_SIZE,
+      part_urls: partUrls,
+      complete_url: completeUrl,
+      abort_url: abortUrl,
+    });
   } catch (e) {
     console.error("create-upload-url error:", e);
     return fail(500, "internal", "An unexpected error occurred. Please try again.");

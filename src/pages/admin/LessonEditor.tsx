@@ -86,16 +86,19 @@ export default function LessonEditor() {
 
     setUpload({ phase: "requesting" });
     try {
-      // 1. Ask the edge function (admin-only) for a presigned PUT URL.
-      const { upload_url, video_key } = await UploadService.requestUploadUrl(
+      // 1. Ask the edge function (admin-only) for presigned upload URLs —
+      //    single PUT for small files, parallel multipart for big ones.
+      const presigned = await UploadService.requestUploadUrl(
         lesson.id,
         file.name,
-        file.type || "video/mp4"
+        file.type || "video/mp4",
+        blob.size
       );
+      const video_key = presigned.video_key;
 
-      // 2. Upload the file straight to Contabo (browser → bucket, no server hop).
+      // 2. Upload straight to Contabo (browser → bucket, no server hop).
       setUpload({ phase: "uploading", pct: 0 });
-      const handle = UploadService.uploadToUrl(upload_url, blob, (pct) =>
+      const handle = UploadService.upload(presigned, blob, (pct) =>
         setUpload({ phase: "uploading", pct })
       );
       uploadHandleRef.current = handle;
