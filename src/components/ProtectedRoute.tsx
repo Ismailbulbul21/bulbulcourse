@@ -8,7 +8,9 @@ export function ProtectedRoute() {
 
   if (initializing) return <Spinner label="Loading your session…" />;
   if (!user) {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+    // Default new visitors to signup so they don't get stuck trying to log
+    // into an account they haven't created yet.
+    return <Navigate to="/signup" state={{ from: location.pathname }} replace />;
   }
   return <Outlet />;
 }

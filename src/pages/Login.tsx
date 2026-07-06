@@ -35,7 +35,9 @@ export default function Login() {
   return (
     <div className="auth-page">
       <form className="card auth-card" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <h1>Welcome back</h1>
+        <h1>
+          Gal <span className="bi-en">Welcome back</span>
+        </h1>
         <p className="muted">Log in to continue learning.</p>
 
         {serverError && <div className="error-box">{serverError}</div>}
@@ -53,11 +55,17 @@ export default function Login() {
         </label>
 
         <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in…" : "Log in"}
+          {isSubmitting ? (
+            "Logging in…"
+          ) : (
+            <>
+              <span className="bi-en">Login</span> Gal
+            </>
+          )}
         </button>
 
         <p className="muted">
-          New here? <Link to="/signup">Create an account</Link>
+          New here? <Link to="/signup">Sign up / Is diiwaangeli</Link>
         </p>
       </form>
     </div>

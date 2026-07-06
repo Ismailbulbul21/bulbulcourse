@@ -54,7 +54,9 @@ export default function Signup() {
   return (
     <div className="auth-page">
       <form className="card auth-card" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <h1>Create your account</h1>
+        <h1>
+          Is diiwaangeli <span className="bi-en">Create your account</span>
+        </h1>
         <p className="muted">Start learning in minutes.</p>
 
         {serverError && <div className="error-box">{serverError}</div>}
@@ -78,11 +80,17 @@ export default function Signup() {
         </label>
 
         <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
-          {isSubmitting ? "Creating account…" : "Sign up"}
+          {isSubmitting ? (
+            "Creating account…"
+          ) : (
+            <>
+              <span className="bi-en">Sign up</span> Is diiwaangeli
+            </>
+          )}
         </button>
 
         <p className="muted">
-          Already have an account? <Link to="/login">Log in</Link>
+          Already have an account? <Link to="/login">Login / Gal</Link>
         </p>
       </form>
     </div>

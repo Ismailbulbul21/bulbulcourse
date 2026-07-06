@@ -40,9 +40,19 @@ export default function Catalog() {
 
   return (
     <div className="page">
-      <section className="hero">
-        <h1>Learn anything, anywhere.</h1>
-        <p>Practical video courses. Watch a free preview, pay with EVC Plus or ZAAD, learn at your own pace.</p>
+      <div className="catalog-toolbar">
+        <div className="category-chips">
+          {categories.map((c) => (
+            <button
+              key={c}
+              type="button"
+              className={`chip ${category === c ? "chip-active" : ""}`}
+              onClick={() => updateParams({ category: c === "All" ? "" : c, page: "1" })}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
         <form className="search-form" onSubmit={submitSearch} role="search">
           <input
             type="search"
@@ -51,23 +61,10 @@ export default function Catalog() {
             onChange={(e) => setSearchInput(e.target.value)}
             aria-label="Search courses"
           />
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-secondary">
             Search
           </button>
         </form>
-      </section>
-
-      <div className="category-chips">
-        {categories.map((c) => (
-          <button
-            key={c}
-            type="button"
-            className={`chip ${category === c ? "chip-active" : ""}`}
-            onClick={() => updateParams({ category: c === "All" ? "" : c, page: "1" })}
-          >
-            {c}
-          </button>
-        ))}
       </div>
 
       {coursesQuery.isPending ? (

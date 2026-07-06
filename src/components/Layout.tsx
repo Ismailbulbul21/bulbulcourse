@@ -37,11 +37,11 @@ export default function Layout() {
             </>
           ) : (
             <>
-              <Link to="/login" className="btn btn-ghost">
-                Log in
-              </Link>
               <Link to="/signup" className="btn btn-primary">
-                Sign up
+                <span className="bi-en">Sign up</span> Is diiwaangeli
+              </Link>
+              <Link to="/login" className="btn btn-ghost">
+                <span className="bi-en">Login</span> Gal
               </Link>
             </>
           )}

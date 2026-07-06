@@ -59,7 +59,7 @@ export default function CourseDetail() {
 
   function goToLesson(lessonId: string) {
     if (!user) {
-      navigate("/login", { state: { from: `/learn/${course.id}/${lessonId}` } });
+      navigate("/signup", { state: { from: `/learn/${course.id}/${lessonId}` } });
       return;
     }
     navigate(`/learn/${course.id}/${lessonId}`);
@@ -67,7 +67,7 @@ export default function CourseDetail() {
 
   function goToCheckout() {
     if (!user) {
-      navigate("/login", { state: { from: `/checkout/${course.id}` } });
+      navigate("/signup", { state: { from: `/checkout/${course.id}` } });
       return;
     }
     navigate(`/checkout/${course.id}`);
