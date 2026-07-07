@@ -27,9 +27,16 @@ export const lessonSchema = z.object({
 });
 export type LessonInput = z.infer<typeof lessonSchema>;
 
+/** Somali mobile-money wallets supported by WaafiPay (routes by number). */
+export const PAYMENT_CHANNELS = [
+  { value: "EVC", label: "EVC Plus", placeholder: "615 123 456" },
+  { value: "ZAAD", label: "ZAAD", placeholder: "634 123 456" },
+  { value: "SAHAL", label: "Sahal", placeholder: "907 123 456" },
+] as const;
+
 export const paymentSchema = z.object({
-  payment_channel: z.enum(["EVC", "ZAAD"], {
-    errorMap: () => ({ message: "Choose EVC Plus or ZAAD" }),
+  payment_channel: z.enum(["EVC", "ZAAD", "SAHAL"], {
+    errorMap: () => ({ message: "Choose EVC Plus, ZAAD or Sahal" }),
   }),
   phone_number: z
     .string()

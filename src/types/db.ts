@@ -8,7 +8,7 @@ export type PurchaseStatus =
   | "expired"
   | "cancelled"
   | "refunded";
-export type PaymentChannel = "EVC" | "ZAAD";
+export type PaymentChannel = "EVC" | "ZAAD" | "SAHAL";
 
 export interface Profile {
   id: string;

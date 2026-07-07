@@ -1,6 +1,7 @@
 // create-payment — user JWT → create pending purchase → WaafiPay API_PURCHASE
-// (direct EVC/ZAAD mobile-money charge via USSD push) → mark purchase
-// completed/failed SERVER-SIDE. The client can never fake a payment.
+// (direct EVC Plus / ZAAD / Sahal mobile-money charge via USSD push; WaafiPay
+// routes by MSISDN) → mark purchase completed/failed SERVER-SIDE. The client
+// can never fake a payment.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -67,8 +68,12 @@ Deno.serve(async (req: Request) => {
         "course_id, payment_channel and phone_number are required."
       );
     }
-    if (!["EVC", "ZAAD"].includes(paymentChannel)) {
-      return fail(400, "invalid_channel", "Invalid payment channel. Use EVC or ZAAD.");
+    if (!["EVC", "ZAAD", "SAHAL"].includes(paymentChannel)) {
+      return fail(
+        400,
+        "invalid_channel",
+        "Invalid payment channel. Use EVC, ZAAD or SAHAL."
+      );
     }
 
     // Price ALWAYS comes from the database, never from the client.

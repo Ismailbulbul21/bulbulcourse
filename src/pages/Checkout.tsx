@@ -3,7 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { paymentSchema, type PaymentInput } from "../schemas/course.schema";
+import {
+  PAYMENT_CHANNELS,
+  paymentSchema,
+  type PaymentInput,
+} from "../schemas/course.schema";
 import { CourseService } from "../services/courses.service";
 import { PurchaseService } from "../services/purchases.service";
 import { PaymentService } from "../services/payment.service";
@@ -33,11 +37,17 @@ export default function Checkout() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<PaymentInput>({
     resolver: zodResolver(paymentSchema),
     defaultValues: { payment_channel: "EVC", phone_number: "" },
   });
+
+  // The phone placeholder follows the selected wallet (e.g. ZAAD → 634…).
+  const selectedChannel = watch("payment_channel");
+  const activeChannel =
+    PAYMENT_CHANNELS.find((c) => c.value === selectedChannel) ?? PAYMENT_CHANNELS[0];
 
   if (courseQuery.isPending || purchasedQuery.isPending) {
     return <Spinner label="Loading checkout…" />;
@@ -101,24 +111,28 @@ export default function Checkout() {
             <>
               <fieldset className="channel-picker">
                 <legend>Pay with</legend>
-                <label className="radio-card">
-                  <input type="radio" value="EVC" {...register("payment_channel")} />
-                  <span>EVC Plus</span>
-                </label>
-                <label className="radio-card">
-                  <input type="radio" value="ZAAD" {...register("payment_channel")} />
-                  <span>ZAAD</span>
-                </label>
+                <div className="channel-options">
+                  {PAYMENT_CHANNELS.map((c) => (
+                    <label key={c.value} className="radio-card">
+                      <input
+                        type="radio"
+                        value={c.value}
+                        {...register("payment_channel")}
+                      />
+                      <span>{c.label}</span>
+                    </label>
+                  ))}
+                </div>
                 {errors.payment_channel && (
                   <span className="field-error">{errors.payment_channel.message}</span>
                 )}
               </fieldset>
 
               <label>
-                Mobile number
+                {activeChannel.label} mobile number
                 <input
                   type="tel"
-                  placeholder="61XXXXXXX"
+                  placeholder={`e.g. ${activeChannel.placeholder}`}
                   autoComplete="tel"
                   {...register("phone_number")}
                 />

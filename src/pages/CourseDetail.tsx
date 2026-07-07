@@ -99,12 +99,12 @@ export default function CourseDetail() {
             ) : syllabus.length === 0 ? (
               <p className="muted">The syllabus will be published soon.</p>
             ) : (
-              syllabus.map((mod, i) => (
-                <details key={mod.id} className="syllabus-module" open={i === 0}>
-                  <summary>
+              syllabus.map((mod) => (
+                <div key={mod.id} className="syllabus-module">
+                  <div className="syllabus-module-head">
                     <span>{mod.title}</span>
                     <span className="muted">{mod.lessons.length} lessons</span>
-                  </summary>
+                  </div>
                   <ul>
                     {mod.lessons.map((lesson) => {
                       const watchable = canWatchEverything || lesson.is_preview;
@@ -157,7 +157,7 @@ export default function CourseDetail() {
                       );
                     })}
                   </ul>
-                </details>
+                </div>
               ))
             )}
           </section>
