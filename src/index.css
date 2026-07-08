@@ -320,7 +320,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
   border-color: rgba(95, 91, 241, 0.35);
 }
 .course-thumb { position: relative; aspect-ratio: 16/10; background: #eef0f7; overflow: hidden; }
-.course-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+.course-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.3s ease; }
 .course-card:hover .course-thumb img { transform: scale(1.04); }
 .course-thumb-price {
   position: absolute;
@@ -383,7 +383,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
   top: 84px;
 }
 .purchase-thumb { aspect-ratio: 16/9; background: #eef0f7; overflow: hidden; }
-.purchase-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.purchase-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .purchase-body { padding: 1.25rem 1.35rem 1.5rem; }
 .purchase-price { font-size: 2.1rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
 .purchase-owned {
@@ -528,7 +528,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .dashboard-card:hover { box-shadow: var(--shadow-md); }
 .dashboard-card-thumb { width: 112px; flex-shrink: 0; }
 .dashboard-card-thumb img, .dashboard-card-thumb .thumb-placeholder {
-  border-radius: 10px; aspect-ratio: 16/10; object-fit: cover; font-size: 1.5rem; height: auto;
+  border-radius: 10px; aspect-ratio: 16/10; object-fit: cover; object-position: top; font-size: 1.5rem; height: auto;
 }
 .dashboard-card-body { flex: 1; display: flex; flex-direction: column; gap: 0.45rem; }
 .dashboard-card-body h3 { margin: 0; font-size: 0.98rem; }
@@ -657,7 +657,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 }
 .admin-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .admin-card-thumb { position: relative; aspect-ratio: 16/9; background: #eef0f7; overflow: hidden; display: block; }
-.admin-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-card-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .admin-card-status { position: absolute; top: 0.7rem; left: 0.7rem; box-shadow: 0 2px 8px rgba(20, 21, 40, 0.18); }
 .admin-card-body { padding: 1rem 1.1rem 1.1rem; display: flex; flex-direction: column; gap: 0.3rem; flex: 1; }
 .admin-card-title { margin: 0; font-size: 1.02rem; }
@@ -694,7 +694,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .tab-active:hover { color: #fff; }
 
 .editor-panel { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.4rem; align-items: start; }
-.thumbnail-preview { border-radius: 10px; margin-bottom: 0.8rem; max-height: 180px; object-fit: cover; }
+.thumbnail-preview { border-radius: 10px; margin-bottom: 0.8rem; max-height: 180px; object-fit: cover; object-position: top; }
 
 .curriculum-module {
   background: var(--surface); border: 1px solid var(--border);
