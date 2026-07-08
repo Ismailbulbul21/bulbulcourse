@@ -456,6 +456,67 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .syllabus-lesson-locked:hover { background: var(--warn-bg); }
 .syllabus-locktext { color: var(--warn); font-weight: 700; }
 
+/* ── Course comments (buyers + admin) ──────────────────────── */
+.comments { margin-top: 2.25rem; }
+.comments h2 { margin-bottom: 0.25rem; }
+.comments-locked {
+  background: var(--surface-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 1rem 0 1.5rem;
+}
+.comment-form textarea,
+.comment-reply-form textarea {
+  margin-top: 0;
+  resize: vertical;
+}
+.comment-form .btn { align-self: flex-start; }
+
+.comment-list { display: flex; flex-direction: column; gap: 1rem; }
+.comment-thread {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.comment { padding: 0.9rem 1.1rem; }
+.comment-reply {
+  margin-left: 1.25rem;
+  border-left: 3px solid var(--primary-soft);
+  background: var(--surface-2);
+}
+.comment-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+.comment-author { font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 0.5rem; }
+.comment-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--grad);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+.comment-time { font-size: 0.78rem; }
+.comment-body { margin: 0.25rem 0 0.4rem; white-space: pre-wrap; word-break: break-word; }
+.comment-actions { display: flex; gap: 0.25rem; }
+.comment-reply-form { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.6rem; }
+.comment-reply-form .btn { align-self: flex-start; }
+.comment-empty { padding: 1rem 0; }
+
 /* ── Auth pages ────────────────────────────────────────────── */
 .auth-page { display: flex; justify-content: center; padding: 3rem 0; }
 .auth-card { width: 100%; max-width: 410px; padding: 1.75rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }

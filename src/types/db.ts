@@ -96,6 +96,16 @@ export interface Progress {
   updated_at: string;
 }
 
+export interface CourseComment {
+  id: string;
+  parent_id: string | null;
+  body: string;
+  created_at: string;
+  user_id: string;
+  author_name: string;
+  author_is_admin: boolean;
+}
+
 /** Row returned by the get_course_syllabus RPC (no video_key — safe for anonymous). */
 export interface SyllabusRow {
   module_id: string;

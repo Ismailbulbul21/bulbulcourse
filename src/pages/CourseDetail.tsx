@@ -4,6 +4,7 @@ import { CourseService } from "../services/courses.service";
 import { PurchaseService } from "../services/purchases.service";
 import { useAuthStore } from "../stores/authStore";
 import { formatPrice } from "../components/CourseCard";
+import CourseComments from "../components/CourseComments";
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
 
@@ -166,6 +167,20 @@ export default function CourseDetail() {
             <p className="muted">
               <Link to="/signup">Create a free account</Link> to watch preview lessons.
             </p>
+          )}
+
+          {canWatchEverything ? (
+            <CourseComments courseId={course.id} currentUserId={user!.id} isAdmin={isAdmin} />
+          ) : (
+            <section className="comments comments-locked">
+              <h2>
+                Su'aalo &amp; Talo <span className="bi-en">Questions &amp; feedback</span>
+              </h2>
+              <p className="muted">
+                🔒 Buy this course to ask questions, report issues, and get replies
+                from the instructor.
+              </p>
+            </section>
           )}
         </div>
 
