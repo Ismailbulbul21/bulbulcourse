@@ -165,7 +165,36 @@ export default function CourseEditor() {
 
       {tab === "publish" && (
         <div className="card publish-panel">
-          <h3>Ready to publish?</h3>
+          {course.status === "published" ? (
+            <div className="status-banner status-live">
+              <div>
+                <strong>✓ This course is LIVE</strong>
+                <p className="muted">
+                  Students can find it in the catalog and buy it.
+                </p>
+              </div>
+              <a
+                href={`/course/${course.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-secondary"
+              >
+                View in catalog ↗
+              </a>
+            </div>
+          ) : (
+            <div className="status-banner status-draft">
+              <div>
+                <strong>● This course is a DRAFT</strong>
+                <p className="muted">
+                  It is hidden — students cannot see it in Courses until you
+                  publish it.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <h3>Publish checklist</h3>
           <ul className="publish-checklist">
             <li className={modules.length > 0 ? "check-ok" : "check-missing"}>
               {modules.length > 0 ? "✓" : "○"} At least one module ({modules.length})
@@ -184,6 +213,14 @@ export default function CourseEditor() {
 
           {setStatus.isError && <ErrorMessage error={setStatus.error} />}
 
+          {lessonCount === 0 && course.status !== "published" && (
+            <div className="error-box">
+              You can't publish yet — this course has no lessons. Open the{" "}
+              <strong>Curriculum</strong> tab, add a module and at least one lesson,
+              then come back here.
+            </div>
+          )}
+
           <div className="publish-actions">
             {course.status !== "published" ? (
               <button
@@ -199,19 +236,23 @@ export default function CourseEditor() {
                 type="button"
                 className="btn btn-secondary"
                 disabled={setStatus.isPending}
-                onClick={() => setStatus.mutate("draft")}
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Hide this course from students and move it back to draft?"
+                    )
+                  ) {
+                    setStatus.mutate("draft");
+                  }
+                }}
               >
-                Unpublish (back to draft)
+                Unpublish (hide from students)
               </button>
             )}
           </div>
-          {lessonCount === 0 && (
-            <p className="muted">Add at least one lesson before publishing.</p>
-          )}
           {lessonsWithVideo < lessonCount && lessonCount > 0 && (
             <p className="muted">
-              You can publish now, but lessons without video will show "No video yet"
-              to students.
+              Lessons without a video will show "No video yet" to students.
             </p>
           )}
         </div>

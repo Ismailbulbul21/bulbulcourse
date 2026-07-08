@@ -723,6 +723,22 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .curriculum-add-module { display: flex; gap: 0.6rem; margin-top: 1.1rem; }
 .curriculum-add-module input { margin-top: 0; flex: 1; }
 
+.status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1.25rem;
+}
+.status-banner strong { font-size: 1.02rem; }
+.status-banner p { margin: 0.1rem 0 0; }
+.status-live { background: var(--success-bg); border: 1px solid #abefc6; }
+.status-live strong { color: var(--success); }
+.status-draft { background: var(--warn-bg); border: 1px solid #fde68a; }
+.status-draft strong { color: var(--warn); }
+
 .publish-checklist { margin: 0.85rem 0 1.35rem; }
 .publish-checklist li { padding: 0.32rem 0; font-size: 0.96rem; }
 .check-ok { color: var(--success); font-weight: 600; }
