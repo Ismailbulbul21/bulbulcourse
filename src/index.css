@@ -385,6 +385,15 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .purchase-thumb { aspect-ratio: 16/9; background: #eef0f7; overflow: hidden; }
 .purchase-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .purchase-body { padding: 1.25rem 1.35rem 1.5rem; }
+.purchase-price-label,
+.checkout-price-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 .purchase-price { font-size: 2.1rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
 .purchase-owned {
   color: var(--success);
@@ -543,6 +552,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
   display: flex; justify-content: space-between; align-items: center;
   border-radius: var(--radius-lg);
 }
+.checkout-price-block { text-align: right; }
 .checkout-price { font-size: 1.6rem; font-weight: 900; }
 .channel-picker { border: none; padding: 0; margin: 0 0 1rem; }
 .channel-picker legend { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.55rem; }

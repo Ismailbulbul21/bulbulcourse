@@ -199,17 +199,18 @@ export default function CourseDetail() {
           <div className="purchase-body">
             {canWatchEverything ? (
               <>
-                <div className="purchase-owned">✓ You own this course</div>
+                <div className="purchase-owned">✓ Waad iibsatay koorsadan</div>
                 <button
                   type="button"
                   className="btn btn-primary btn-lg btn-block"
                   onClick={() => navigate(`/learn/${course.id}`)}
                 >
-                  ▶ Continue learning
+                  ▶ Sii wad barashada
                 </button>
               </>
             ) : (
               <>
+                <span className="purchase-price-label">Lacagta</span>
                 <div className="purchase-price">
                   {formatPrice(course.price, course.currency)}
                 </div>
@@ -218,35 +219,35 @@ export default function CourseDetail() {
                   className="btn btn-primary btn-lg btn-block"
                   onClick={goToCheckout}
                 >
-                  {course.price > 0 ? "Buy this course" : "Enroll for free"}
+                  {course.price > 0 ? "Iibso koorsada" : "Isku diiwaan geli bilaash"}
                 </button>
                 <p className="purchase-note">
-                  Pay with <strong>EVC Plus</strong> or <strong>ZAAD</strong> — start
-                  watching immediately.
+                  Ku bixi <strong>EVC Plus</strong>, <strong>ZAAD</strong> ama{" "}
+                  <strong>Sahal</strong> — isla markiiba bilow daawashada.
                 </p>
               </>
             )}
 
             <ul className="purchase-features">
               <li>
-                <span aria-hidden>🎬</span> {lessonCount} video lessons
+                <span aria-hidden>🎬</span> {lessonCount} casharo fiidyow ah
               </li>
               {totalDuration > 0 && (
                 <li>
-                  <span aria-hidden>⏱️</span> {formatDuration(totalDuration)} of content
+                  <span aria-hidden>⏱️</span> {formatDuration(totalDuration)} oo casharro ah
                 </li>
               )}
               {previewCount > 0 && !canWatchEverything && (
                 <li>
-                  <span aria-hidden>👀</span> {previewCount} free preview lesson
-                  {previewCount > 1 ? "s" : ""}
+                  <span aria-hidden>👀</span> {previewCount} cashar oo bilaash ah oo la
+                  daawan karo
                 </li>
               )}
               <li>
-                <span aria-hidden>📱</span> EVC Plus &amp; ZAAD accepted
+                <span aria-hidden>📱</span> EVC Plus, ZAAD &amp; Sahal waa la aqbalaa
               </li>
               <li>
-                <span aria-hidden>♾️</span> Lifetime access, learn at your pace
+                <span aria-hidden>♾️</span> Helitaan joogto ah — waligaa
               </li>
             </ul>
           </div>

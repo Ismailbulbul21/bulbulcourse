@@ -36,13 +36,13 @@ export const PAYMENT_CHANNELS = [
 
 export const paymentSchema = z.object({
   payment_channel: z.enum(["EVC", "ZAAD", "SAHAL"], {
-    errorMap: () => ({ message: "Choose EVC Plus, ZAAD or Sahal" }),
+    errorMap: () => ({ message: "Dooro EVC Plus, ZAAD ama Sahal" }),
   }),
   phone_number: z
     .string()
     .regex(
       /^(\+?252|0)?\d{8,9}$/,
-      "Enter a valid Somali mobile number, e.g. 61XXXXXXX"
+      "Geli lambar mobile Soomaali ah oo sax ah, tusaale 61XXXXXXX"
     ),
 });
 export type PaymentInput = z.infer<typeof paymentSchema>;

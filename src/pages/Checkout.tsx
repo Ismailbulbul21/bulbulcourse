@@ -50,7 +50,7 @@ export default function Checkout() {
     PAYMENT_CHANNELS.find((c) => c.value === selectedChannel) ?? PAYMENT_CHANNELS[0];
 
   if (courseQuery.isPending || purchasedQuery.isPending) {
-    return <Spinner label="Loading checkout…" />;
+    return <Spinner label="Sugaya…" />;
   }
   if (courseQuery.isError) {
     return <ErrorMessage error={courseQuery.error} onRetry={() => courseQuery.refetch()} />;
@@ -79,7 +79,9 @@ export default function Checkout() {
       await queryClient.invalidateQueries({ queryKey: ["purchased-check", course.id] });
       navigate(`/learn/${course.id}`, { replace: true });
     } catch (e) {
-      setPayError(e instanceof Error ? e.message : "Payment failed. Please try again.");
+      setPayError(
+        e instanceof Error ? e.message : "Lacag bixintu waa fashilantay. Fadlan mar kale isku day."
+      );
     } finally {
       setPaying(false);
     }
@@ -87,20 +89,23 @@ export default function Checkout() {
 
   return (
     <div className="page page-narrow">
-      <h1>Checkout</h1>
+      <h1>Bixinta Koorsada</h1>
 
       <div className="card checkout-summary">
         <h3>{course.title}</h3>
-        <div className="checkout-price">{formatPrice(course.price, course.currency)}</div>
+        <div className="checkout-price-block">
+          <span className="checkout-price-label">Lacagta</span>
+          <div className="checkout-price">{formatPrice(course.price, course.currency)}</div>
+        </div>
       </div>
 
       {paying ? (
         <div className="card checkout-waiting">
-          <Spinner label="Waiting for payment confirmation…" />
+          <Spinner label="La sugayo xaqiijinta lacag bixinta…" />
           <p>
-            <strong>Check your phone.</strong> Approve the {isFree ? "" : "USSD "}payment
-            request to unlock the course. This can take up to two minutes — keep this
-            page open.
+            <strong>Fiiri taleefankaaga.</strong> Ansixi codsiga lacag bixinta si aad u
+            furto koorsada. Waxay qaadan kartaa ilaa laba daqiiqo — fadlan bogga ha ka
+            bixin.
           </p>
         </div>
       ) : (
@@ -110,7 +115,7 @@ export default function Checkout() {
           {!isFree && (
             <>
               <fieldset className="channel-picker">
-                <legend>Pay with</legend>
+                <legend>Ku bixi</legend>
                 <div className="channel-options">
                   {PAYMENT_CHANNELS.map((c) => (
                     <label key={c.value} className="radio-card">
@@ -129,10 +134,10 @@ export default function Checkout() {
               </fieldset>
 
               <label>
-                {activeChannel.label} mobile number
+                Lambarka {activeChannel.label}
                 <input
                   type="tel"
-                  placeholder={`e.g. ${activeChannel.placeholder}`}
+                  placeholder={`tusaale: ${activeChannel.placeholder}`}
                   autoComplete="tel"
                   {...register("phone_number")}
                 />
@@ -149,12 +154,12 @@ export default function Checkout() {
 
           <button type="submit" className="btn btn-primary btn-block btn-lg">
             {isFree
-              ? "Enroll for free"
-              : `Pay ${formatPrice(course.price, course.currency)}`}
+              ? "Isku diiwaan geli bilaash"
+              : `Bixi ${formatPrice(course.price, course.currency)}`}
           </button>
           <p className="muted">
-            Payment is confirmed on your phone. The course unlocks instantly after
-            approval.
+            Lacag bixinta waxaa lagu xaqiijiyaa taleefankaaga. Koorsada waa la furayaa
+            isla markiiba marka la ansixiyo.
           </p>
         </form>
       )}

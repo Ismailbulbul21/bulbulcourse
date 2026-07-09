@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signupSchema, type SignupInput } from "../schemas/auth.schema";
 import { supabase, toError } from "../lib/supabase";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // If they were sent here from "Buy" (Iibso), continue to that payment screen.
+  const from = (location.state as { from?: string } | null)?.from ?? "/";
   const [serverError, setServerError] = useState<string | null>(null);
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
 
@@ -22,18 +25,17 @@ export default function Signup() {
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
-        options: { data: { full_name: values.fullName } },
       });
       if (error) throw toError(error);
       if (data.session) {
-        // New users land on the course catalog, not the empty dashboard.
-        navigate("/", { replace: true });
+        // Continue to the payment screen if they came to buy, else catalog.
+        navigate(from, { replace: true });
       } else {
         // Email confirmation is enabled on the project.
         setNeedsConfirmation(true);
       }
     } catch (e) {
-      setServerError(e instanceof Error ? e.message : "Signup failed. Please try again.");
+      setServerError(e instanceof Error ? e.message : "Diiwaangelintu waa fashilantay. Fadlan mar kale isku day.");
     }
   }
 
@@ -41,10 +43,10 @@ export default function Signup() {
     return (
       <div className="auth-page">
         <div className="card auth-card">
-          <h1>Check your email</h1>
+          <h1>Fiiri emailkaaga</h1>
           <p>
-            We sent you a confirmation link. Open it to activate your account,
-            then <Link to="/login">log in</Link>.
+            Waxaan kuu dirnay link xaqiijin. Fur si aad u hawlgeliso akoonkaaga,
+            ka dibna <Link to="/login">gal</Link>.
           </p>
         </div>
       </div>
@@ -57,15 +59,9 @@ export default function Signup() {
         <h1>
           Is diiwaangeli <span className="bi-en">Create your account</span>
         </h1>
-        <p className="muted">Start learning in minutes.</p>
+        <p className="muted">Daqiiqado gudahood ku bilow barashada.</p>
 
         {serverError && <div className="error-box">{serverError}</div>}
-
-        <label>
-          Full name
-          <input type="text" autoComplete="name" {...register("fullName")} />
-          {errors.fullName && <span className="field-error">{errors.fullName.message}</span>}
-        </label>
 
         <label>
           Email
@@ -74,23 +70,23 @@ export default function Signup() {
         </label>
 
         <label>
-          Password
+          Furaha sirta <span className="bi-en">Password</span>
           <input type="password" autoComplete="new-password" {...register("password")} />
           {errors.password && <span className="field-error">{errors.password.message}</span>}
         </label>
 
         <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
           {isSubmitting ? (
-            "Creating account…"
+            "Diiwaangelinaya…"
           ) : (
             <>
-              <span className="bi-en">Sign up</span> Is diiwaangeli
+              Is diiwaangeli <span className="bi-en">Sign up</span>
             </>
           )}
         </button>
 
         <p className="muted">
-          Already have an account? <Link to="/login">Login / Gal</Link>
+          Horey ma u leedahay akoon? <Link to="/login">Gal / Login</Link>
         </p>
       </form>
     </div>
