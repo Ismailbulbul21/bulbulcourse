@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { CourseService } from "../../services/courses.service";
+import { AdminService } from "../../services/admin.service";
 import { formatPrice } from "../../components/CourseCard";
 import Spinner from "../../components/Spinner";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -12,6 +13,11 @@ export default function AdminCourses() {
   const coursesQuery = useQuery({
     queryKey: ["admin-courses"],
     queryFn: () => CourseService.adminList(),
+  });
+
+  const statsQuery = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: () => AdminService.stats(),
   });
 
   function invalidate() {
@@ -43,6 +49,11 @@ export default function AdminCourses() {
   const published = courses.filter((c) => c.status === "published").length;
   const drafts = courses.filter((c) => c.status === "draft").length;
 
+  const stats = statsQuery.data ?? null;
+  const buyersById = new Map(
+    (stats?.per_course ?? []).map((c) => [c.id, c.buyers])
+  );
+
   return (
     <div className="page">
       <div className="admin-hero">
@@ -53,6 +64,30 @@ export default function AdminCourses() {
         <Link to="/admin/courses/new" className="btn btn-primary btn-lg">
           + Create Course
         </Link>
+      </div>
+
+      {/* Business metrics — admin only (RLS-gated RPC) */}
+      <div className="stat-row stat-row-primary">
+        <div className="stat-card stat-card-hero">
+          <span className="stat-num">
+            {statsQuery.isPending ? "…" : stats?.total_users ?? 0}
+          </span>
+          <span className="stat-label">👥 Isticmaaleyaal (users)</span>
+        </div>
+        <div className="stat-card stat-card-hero">
+          <span className="stat-num">
+            {statsQuery.isPending ? "…" : stats?.paid_purchases ?? 0}
+          </span>
+          <span className="stat-label">✅ Dad iibsaday (paid)</span>
+        </div>
+        <div className="stat-card stat-card-hero">
+          <span className="stat-num">
+            {statsQuery.isPending
+              ? "…"
+              : formatPrice(stats?.total_revenue ?? 0, "USD")}
+          </span>
+          <span className="stat-label">💰 Dakhliga (revenue)</span>
+        </div>
       </div>
 
       <div className="stat-row">
@@ -104,6 +139,9 @@ export default function AdminCourses() {
                 </h3>
                 <p className="muted">
                   {course.category} · {formatPrice(course.price, course.currency)}
+                </p>
+                <p className="admin-card-buyers">
+                  👥 {buyersById.get(course.id) ?? 0} qof ayaa iibsaday
                 </p>
                 <div className="admin-card-actions">
                   <Link

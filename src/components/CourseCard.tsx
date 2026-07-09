@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import type { Course } from "../types/db";
 
 export function formatPrice(price: number, currency = "USD"): string {
-  if (Number(price) <= 0) return "Free";
+  if (Number(price) <= 0) return "Bilaash";
   const symbol = currency === "USD" ? "$" : `${currency} `;
   return `${symbol}${Number(price).toFixed(2)}`;
 }
 
 export default function CourseCard({ course }: { course: Course }) {
+  const isFree = Number(course.price) <= 0;
   return (
     <Link to={`/course/${course.id}`} className="course-card">
       <div className="course-thumb">
@@ -28,9 +29,11 @@ export default function CourseCard({ course }: { course: Course }) {
         <p className="course-card-desc">{course.description}</p>
         <div className="course-card-footer">
           <span className="course-card-price">
-            {formatPrice(course.price, course.currency)}
+            {isFree
+              ? "Lacagta waa Bilaash"
+              : `Lacagta waa ${formatPrice(course.price, course.currency)}`}
           </span>
-          <span className="course-card-cta">View course →</span>
+          <span className="course-card-cta">Fiiri koorsada →</span>
         </div>
       </div>
     </Link>

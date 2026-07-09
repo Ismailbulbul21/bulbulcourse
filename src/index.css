@@ -349,10 +349,11 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 }
 .course-card-footer {
   display: flex; justify-content: space-between; align-items: center;
+  gap: 0.5rem; flex-wrap: wrap;
   margin-top: auto; padding-top: 0.7rem; border-top: 1px dashed var(--border);
 }
-.course-card-price { font-weight: 800; font-size: 1.08rem; }
-.course-card-cta { color: var(--primary-deep); font-weight: 700; font-size: 0.88rem; }
+.course-card-price { font-weight: 800; font-size: 0.98rem; }
+.course-card-cta { color: var(--primary-deep); font-weight: 700; font-size: 0.88rem; white-space: nowrap; }
 .course-card:hover .course-card-cta { text-decoration: underline; }
 
 .pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 2.25rem 0 0; }
@@ -654,7 +655,16 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 }
 .stat-label { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
 
+/* Business metrics row — highlighted */
+.stat-row-primary { margin-bottom: 1rem; }
+.stat-card-hero {
+  background: linear-gradient(135deg, #eef0ff, #f3e8ff);
+  border-color: rgba(95, 91, 241, 0.25);
+}
+.stat-card-hero .stat-num { font-size: 2.2rem; }
+
 .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.4rem; }
+.admin-card-buyers { margin: 0; font-size: 0.85rem; font-weight: 700; color: var(--primary-deep); }
 .admin-card {
   background: var(--surface);
   border: 1px solid var(--border);
