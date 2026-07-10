@@ -25,6 +25,8 @@ export interface Course {
   description: string;
   category: string;
   price: number;
+  /** Old price — when > price the UI shows a crossed-out discount. */
+  compare_at_price: number | null;
   currency: string;
   thumbnail_url: string | null;
   status: CourseStatus;

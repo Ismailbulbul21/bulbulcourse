@@ -72,6 +72,10 @@ export default function CourseEditor() {
         description: values.description,
         category: values.category,
         price: Number(values.price),
+        compare_at_price:
+          values.compare_at_price.trim() !== "" && Number(values.compare_at_price) > 0
+            ? Number(values.compare_at_price)
+            : null,
       });
       invalidateCourse();
       setDetailsSaved(true);
@@ -132,6 +136,8 @@ export default function CourseEditor() {
                   ? "Web Development"
                   : "Mobile") as CourseInput["category"],
                 price: String(course.price),
+                compare_at_price:
+                  course.compare_at_price != null ? String(course.compare_at_price) : "",
               }}
               submitLabel="Save details"
               onSubmit={saveDetails}

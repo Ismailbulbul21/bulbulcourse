@@ -128,6 +128,7 @@ export const CourseService = {
     description: string;
     category: string;
     price: number;
+    compare_at_price: number | null;
     created_by: string;
   }): Promise<Course> {
     const { data, error } = await supabase

@@ -65,10 +65,27 @@ export default function CourseForm({
 
         <label>
           Price (USD)
-          <input type="number" step="0.01" min="0" placeholder="25" {...register("price")} />
+          <input type="number" step="0.01" min="0" placeholder="15" {...register("price")} />
           {errors.price && <span className="field-error">{errors.price.message}</span>}
         </label>
       </div>
+
+      <label>
+        Qiimaha hore — discount{" "}
+        <span className="bi-en">
+          (optional: old price shown crossed out, e.g. 25 → students see the deal)
+        </span>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="tusaale: 25 (bannaan ka tag haddii aanu jirin discount)"
+          {...register("compare_at_price")}
+        />
+        {errors.compare_at_price && (
+          <span className="field-error">{errors.compare_at_price.message}</span>
+        )}
+      </label>
 
       <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
         {isSubmitting ? "Saving…" : submitLabel}

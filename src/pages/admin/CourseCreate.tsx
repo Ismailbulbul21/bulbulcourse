@@ -20,6 +20,10 @@ export default function CourseCreate() {
         description: values.description,
         category: values.category,
         price: Number(values.price),
+        compare_at_price:
+          values.compare_at_price.trim() !== "" && Number(values.compare_at_price) > 0
+            ? Number(values.compare_at_price)
+            : null,
         created_by: user!.id,
       });
       void queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
@@ -44,6 +48,7 @@ export default function CourseCreate() {
             description: "",
             category: "Mobile",
             price: "0",
+            compare_at_price: "",
           }}
           submitLabel="Save & Continue →"
           onSubmit={onSubmit}

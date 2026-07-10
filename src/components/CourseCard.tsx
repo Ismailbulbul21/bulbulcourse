@@ -7,8 +7,27 @@ export function formatPrice(price: number, currency = "USD"): string {
   return `${symbol}${Number(price).toFixed(2)}`;
 }
 
+/** True when the course has an old price higher than the current one. */
+export function hasDiscount(
+  course: Pick<Course, "price" | "compare_at_price">
+): boolean {
+  return (
+    course.compare_at_price != null &&
+    Number(course.compare_at_price) > Number(course.price)
+  );
+}
+
+export function discountPct(
+  course: Pick<Course, "price" | "compare_at_price">
+): number {
+  return Math.round(
+    (1 - Number(course.price) / Number(course.compare_at_price)) * 100
+  );
+}
+
 export default function CourseCard({ course }: { course: Course }) {
   const isFree = Number(course.price) <= 0;
+  const discounted = hasDiscount(course);
   return (
     <Link to={`/course/${course.id}`} className="course-card">
       <div className="course-thumb">
@@ -18,6 +37,9 @@ export default function CourseCard({ course }: { course: Course }) {
           <div className="thumb-placeholder" aria-hidden>
             {course.title.slice(0, 1).toUpperCase()}
           </div>
+        )}
+        {discounted && (
+          <span className="discount-badge">-{discountPct(course)}%</span>
         )}
         <span className="course-thumb-price">
           {formatPrice(course.price, course.currency)}
@@ -29,9 +51,13 @@ export default function CourseCard({ course }: { course: Course }) {
         <p className="course-card-desc">{course.description}</p>
         <div className="course-card-footer">
           <span className="course-card-price">
-            {isFree
-              ? "Lacagta waa Bilaash"
-              : `Lacagta waa ${formatPrice(course.price, course.currency)}`}
+            Lacagta waa{" "}
+            {discounted && (
+              <s className="price-old">
+                {formatPrice(course.compare_at_price!, course.currency)}
+              </s>
+            )}{" "}
+            {isFree ? "Bilaash" : formatPrice(course.price, course.currency)}
           </span>
           <span className="course-card-cta">Fiiri koorsada →</span>
         </div>

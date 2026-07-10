@@ -150,6 +150,10 @@ export default function Player() {
     ) {
       video.currentTime = saved.last_position_seconds;
     }
+    // Start playing right away — the user already clicked the lesson.
+    // (Browsers may block autoplay-with-sound before any interaction;
+    // ignore the rejection in that case.)
+    void video.play().catch(() => {});
   }
 
   function handleEnded() {
@@ -261,6 +265,7 @@ export default function Player() {
                   ref={videoRef}
                   src={videoQuery.data.url}
                   controls
+                  autoPlay
                   controlsList="nodownload noremoteplayback"
                   disablePictureInPicture
                   playsInline
@@ -324,10 +329,30 @@ export default function Player() {
       </div>
 
       <aside className="player-sidebar">
-        <h3>Course outline</h3>
+        <div className="sidebar-progress">
+          <div className="sidebar-progress-top">
+            <span className="sidebar-progress-title">Horumarkaaga</span>
+            <span className="sidebar-progress-nums">
+              {completedCount}/{orderedLessons.length}
+            </span>
+          </div>
+          <div className="progress-bar">
+            <div
+              className="progress-bar-fill"
+              style={{
+                width: `${
+                  orderedLessons.length > 0
+                    ? Math.round((completedCount / orderedLessons.length) * 100)
+                    : 0
+                }%`,
+              }}
+            />
+          </div>
+        </div>
+
         {outline.map((mod) => (
-          <details key={mod.id} open className="outline-module">
-            <summary>{mod.title}</summary>
+          <div key={mod.id} className="outline-module">
+            <div className="outline-module-head">{mod.title}</div>
             <ul>
               {mod.lessons.map((lesson) => {
                 const unlocked = accessible.has(lesson.id) || isAdmin;
@@ -337,18 +362,29 @@ export default function Player() {
                   <li key={lesson.id}>
                     <button
                       type="button"
-                      className={`outline-lesson ${active ? "outline-lesson-active" : ""}`}
+                      className={`outline-lesson ${
+                        active ? "outline-lesson-active" : ""
+                      } ${done ? "outline-lesson-done" : ""}`}
                       onClick={() => {
                         if (unlocked) navigate(`/learn/${course.id}/${lesson.id}`);
                         else navigate(`/checkout/${course.id}`);
                       }}
                     >
-                      <span className="outline-lesson-state">
+                      <span
+                        className={`outline-chip ${
+                          done
+                            ? "outline-chip-done"
+                            : unlocked
+                              ? "outline-chip-play"
+                              : "outline-chip-locked"
+                        }`}
+                        aria-hidden
+                      >
                         {done ? "✓" : unlocked ? "▶" : "🔒"}
                       </span>
                       <span className="outline-lesson-title">{lesson.title}</span>
                       {lesson.duration_seconds > 0 && (
-                        <span className="outline-lesson-duration muted">
+                        <span className="outline-lesson-duration">
                           {formatDuration(lesson.duration_seconds)}
                         </span>
                       )}
@@ -357,7 +393,7 @@ export default function Player() {
                 );
               })}
             </ul>
-          </details>
+          </div>
         ))}
       </aside>
     </div>

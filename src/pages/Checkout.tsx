@@ -11,7 +11,7 @@ import {
 import { CourseService } from "../services/courses.service";
 import { PurchaseService } from "../services/purchases.service";
 import { PaymentService } from "../services/payment.service";
-import { formatPrice } from "../components/CourseCard";
+import { formatPrice, hasDiscount } from "../components/CourseCard";
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
 
@@ -95,6 +95,11 @@ export default function Checkout() {
         <h3>{course.title}</h3>
         <div className="checkout-price-block">
           <span className="checkout-price-label">Lacagta</span>
+          {hasDiscount(course) && (
+            <s className="price-old">
+              {formatPrice(course.compare_at_price!, course.currency)}
+            </s>
+          )}
           <div className="checkout-price">{formatPrice(course.price, course.currency)}</div>
         </div>
       </div>

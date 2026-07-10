@@ -17,6 +17,14 @@ export const courseSchema = z.object({
       (v) => !Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 10000,
       "Enter a valid price between 0 and 10000"
     ),
+  compare_at_price: z
+    .string()
+    .refine(
+      (v) =>
+        v.trim() === "" ||
+        (!Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 10000),
+      "Geli qiime sax ah (ama bannaan ka tag)"
+    ),
 });
 export type CourseInput = z.infer<typeof courseSchema>;
 

@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { CourseService } from "../services/courses.service";
 import { PurchaseService } from "../services/purchases.service";
 import { useAuthStore } from "../stores/authStore";
-import { formatPrice } from "../components/CourseCard";
+import { discountPct, formatPrice, hasDiscount } from "../components/CourseCard";
 import CourseComments from "../components/CourseComments";
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
@@ -211,6 +211,16 @@ export default function CourseDetail() {
             ) : (
               <>
                 <span className="purchase-price-label">Lacagta</span>
+                {hasDiscount(course) && (
+                  <div className="purchase-old-row">
+                    <s className="price-old">
+                      {formatPrice(course.compare_at_price!, course.currency)}
+                    </s>
+                    <span className="discount-chip">
+                      -{discountPct(course)}% qiimo dhimis
+                    </span>
+                  </div>
+                )}
                 <div className="purchase-price">
                   {formatPrice(course.price, course.currency)}
                 </div>
