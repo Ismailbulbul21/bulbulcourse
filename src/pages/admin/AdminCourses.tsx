@@ -130,7 +130,7 @@ export default function AdminCourses() {
                   </div>
                 )}
                 <span className={`badge badge-${course.status} admin-card-status`}>
-                  {course.status}
+                  {course.status === "coming_soon" ? "🔜 coming soon" : course.status}
                 </span>
               </Link>
               <div className="admin-card-body">

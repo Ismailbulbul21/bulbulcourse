@@ -28,6 +28,7 @@ export function discountPct(
 export default function CourseCard({ course }: { course: Course }) {
   const isFree = Number(course.price) <= 0;
   const discounted = hasDiscount(course);
+  const comingSoon = course.status === "coming_soon";
   return (
     <Link to={`/course/${course.id}`} className="course-card">
       <div className="course-thumb">
@@ -38,27 +39,39 @@ export default function CourseCard({ course }: { course: Course }) {
             {course.title.slice(0, 1).toUpperCase()}
           </div>
         )}
-        {discounted && (
-          <span className="discount-badge">-{discountPct(course)}%</span>
+        {comingSoon ? (
+          <span className="soon-badge">🔜 DHAWAAN</span>
+        ) : (
+          discounted && (
+            <span className="discount-badge">-{discountPct(course)}%</span>
+          )
         )}
-        <span className="course-thumb-price">
-          {formatPrice(course.price, course.currency)}
-        </span>
+        {!comingSoon && (
+          <span className="course-thumb-price">
+            {formatPrice(course.price, course.currency)}
+          </span>
+        )}
       </div>
       <div className="course-card-body">
         <span className="badge badge-category">{course.category}</span>
         <h3 className="course-card-title">{course.title}</h3>
         <p className="course-card-desc">{course.description}</p>
         <div className="course-card-footer">
-          <span className="course-card-price">
-            Lacagta waa{" "}
-            {discounted && (
-              <s className="price-old">
-                {formatPrice(course.compare_at_price!, course.currency)}
-              </s>
-            )}{" "}
-            {isFree ? "Bilaash" : formatPrice(course.price, course.currency)}
-          </span>
+          {comingSoon ? (
+            <span className="course-card-price soon-text">
+              Dhawaan ayaa la furayaa
+            </span>
+          ) : (
+            <span className="course-card-price">
+              Lacagta waa{" "}
+              {discounted && (
+                <s className="price-old">
+                  {formatPrice(course.compare_at_price!, course.currency)}
+                </s>
+              )}{" "}
+              {isFree ? "Bilaash" : formatPrice(course.price, course.currency)}
+            </span>
+          )}
           <span className="course-card-cta">Fiiri koorsada →</span>
         </div>
       </div>

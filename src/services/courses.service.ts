@@ -51,8 +51,11 @@ export const CourseService = {
     let query = supabase
       .from("courses")
       .select("*", { count: "exact" })
-      .eq("status", "published")
+      .in("status", ["published", "coming_soon"])
       .is("deleted_at", null)
+      // 'published' sorts after 'coming_soon' alphabetically, so descending
+      // puts buyable courses first and upcoming ones after.
+      .order("status", { ascending: false })
       .order("created_at", { ascending: false })
       .range(from, to)
       .abortSignal(queryTimeoutSignal());

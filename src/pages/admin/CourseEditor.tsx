@@ -41,7 +41,7 @@ export default function CourseEditor() {
   }
 
   const setStatus = useMutation({
-    mutationFn: (status: "draft" | "published" | "archived") =>
+    mutationFn: (status: "draft" | "coming_soon" | "published" | "archived") =>
       CourseService.update(courseId!, { status }),
     onSuccess: invalidateCourse,
   });
@@ -188,6 +188,24 @@ export default function CourseEditor() {
                 View in catalog ↗
               </a>
             </div>
+          ) : course.status === "coming_soon" ? (
+            <div className="status-banner status-soon">
+              <div>
+                <strong>🔜 This course shows as COMING SOON</strong>
+                <p className="muted">
+                  Students see it in the catalog as upcoming, but cannot buy or
+                  watch it yet. Publish it when it's ready.
+                </p>
+              </div>
+              <a
+                href={`/course/${course.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-secondary"
+              >
+                View in catalog ↗
+              </a>
+            </div>
           ) : (
             <div className="status-banner status-draft">
               <div>
@@ -229,14 +247,44 @@ export default function CourseEditor() {
 
           <div className="publish-actions">
             {course.status !== "published" ? (
-              <button
-                type="button"
-                className="btn btn-primary btn-lg"
-                disabled={lessonCount === 0 || setStatus.isPending}
-                onClick={() => setStatus.mutate("published")}
-              >
-                {setStatus.isPending ? "Publishing…" : "🚀 Publish course"}
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-lg"
+                  disabled={lessonCount === 0 || setStatus.isPending}
+                  onClick={() => setStatus.mutate("published")}
+                >
+                  {setStatus.isPending ? "Publishing…" : "🚀 Publish course"}
+                </button>
+                {course.status !== "coming_soon" ? (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-lg"
+                    disabled={setStatus.isPending}
+                    title="Show in the catalog as upcoming — no lessons needed yet"
+                    onClick={() => setStatus.mutate("coming_soon")}
+                  >
+                    🔜 Show as Coming Soon
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    disabled={setStatus.isPending}
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          "Remove this course from the catalog and move it back to draft?"
+                        )
+                      ) {
+                        setStatus.mutate("draft");
+                      }
+                    }}
+                  >
+                    Hide (back to draft)
+                  </button>
+                )}
+              </>
             ) : (
               <button
                 type="button"

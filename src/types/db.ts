@@ -1,5 +1,5 @@
 export type Role = "student" | "admin";
-export type CourseStatus = "draft" | "published" | "archived";
+export type CourseStatus = "draft" | "coming_soon" | "published" | "archived";
 export type PurchaseStatus =
   | "pending"
   | "processing"

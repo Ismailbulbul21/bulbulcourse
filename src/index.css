@@ -256,6 +256,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .badge-draft { background: #f2f4f7; color: var(--muted); }
 .badge-archived { background: var(--danger-bg); color: var(--danger); }
 .badge-preview { background: var(--warn-bg); color: var(--warn); }
+.badge-coming_soon { background: #e0f2fe; color: #0369a1; }
 
 /* ── Catalog ───────────────────────────────────────────────── */
 /* Compact toolbar so courses are visible immediately (no big hero) */
@@ -406,6 +407,36 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
   padding: 0.22rem 0.7rem;
   box-shadow: 0 2px 8px rgba(22, 163, 74, 0.4);
 }
+/* Coming soon (dhawaan) */
+.soon-badge {
+  position: absolute;
+  left: 0.7rem;
+  top: 0.7rem;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  border-radius: 999px;
+  padding: 0.24rem 0.75rem;
+  box-shadow: 0 2px 10px rgba(14, 165, 233, 0.45);
+}
+.soon-text { color: #0369a1; }
+.coming-soon-panel { text-align: center; padding: 0.4rem 0 0.2rem; }
+.coming-soon-badge-big {
+  display: inline-block;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  padding: 0.45rem 1.2rem;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
+}
+.status-soon { background: #e0f2fe; border: 1px solid #bae6fd; }
+.status-soon strong { color: #0369a1; }
+
 .purchase-old-row { display: flex; align-items: center; gap: 0.5rem; }
 .purchase-old-row .price-old { font-size: 1.05rem; }
 .discount-chip {

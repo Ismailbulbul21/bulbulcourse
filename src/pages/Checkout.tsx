@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   PAYMENT_CHANNELS,
   paymentSchema,
@@ -61,6 +61,21 @@ export default function Checkout() {
   if (purchasedQuery.data === true) {
     navigate(`/learn/${course.id}`, { replace: true });
     return null;
+  }
+
+  // Upcoming courses cannot be bought yet (the server enforces this too).
+  if (course.status === "coming_soon") {
+    return (
+      <div className="page page-narrow">
+        <div className="card empty-state">
+          <h3>🔜 Koorsadan weli lama furin</h3>
+          <p>Dhawaan ayaa la furayaa — soo laabo mar dambe.</p>
+          <Link to={`/course/${course.id}`} className="btn btn-primary">
+            ← Ku laabo koorsada
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const isFree = Number(course.price) <= 0;

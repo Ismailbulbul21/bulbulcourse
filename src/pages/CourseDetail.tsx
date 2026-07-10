@@ -169,7 +169,7 @@ export default function CourseDetail() {
             </p>
           )}
 
-          {canWatchEverything ? (
+          {course.status === "coming_soon" ? null : canWatchEverything ? (
             <CourseComments courseId={course.id} currentUserId={user!.id} isAdmin={isAdmin} />
           ) : (
             <section className="comments comments-locked">
@@ -197,7 +197,15 @@ export default function CourseDetail() {
           </div>
 
           <div className="purchase-body">
-            {canWatchEverything ? (
+            {course.status === "coming_soon" ? (
+              <div className="coming-soon-panel">
+                <div className="coming-soon-badge-big">🔜 DHAWAAN</div>
+                <p>
+                  Koorsadan waxay furmaysaa <strong>dhawaan</strong>. Soo laabo si
+                  aad u iibsato marka la furo!
+                </p>
+              </div>
+            ) : canWatchEverything ? (
               <>
                 <div className="purchase-owned">✓ Waad iibsatay koorsadan</div>
                 <button
@@ -238,28 +246,30 @@ export default function CourseDetail() {
               </>
             )}
 
-            <ul className="purchase-features">
-              <li>
-                <span aria-hidden>🎬</span> {lessonCount} casharo fiidyow ah
-              </li>
-              {totalDuration > 0 && (
+            {course.status !== "coming_soon" && (
+              <ul className="purchase-features">
                 <li>
-                  <span aria-hidden>⏱️</span> {formatDuration(totalDuration)} oo casharro ah
+                  <span aria-hidden>🎬</span> {lessonCount} casharo fiidyow ah
                 </li>
-              )}
-              {previewCount > 0 && !canWatchEverything && (
+                {totalDuration > 0 && (
+                  <li>
+                    <span aria-hidden>⏱️</span> {formatDuration(totalDuration)} oo casharro ah
+                  </li>
+                )}
+                {previewCount > 0 && !canWatchEverything && (
+                  <li>
+                    <span aria-hidden>👀</span> {previewCount} cashar oo bilaash ah oo la
+                    daawan karo
+                  </li>
+                )}
                 <li>
-                  <span aria-hidden>👀</span> {previewCount} cashar oo bilaash ah oo la
-                  daawan karo
+                  <span aria-hidden>📱</span> EVC Plus, ZAAD &amp; Sahal waa la aqbalaa
                 </li>
-              )}
-              <li>
-                <span aria-hidden>📱</span> EVC Plus, ZAAD &amp; Sahal waa la aqbalaa
-              </li>
-              <li>
-                <span aria-hidden>♾️</span> Helitaan joogto ah — waligaa
-              </li>
-            </ul>
+                <li>
+                  <span aria-hidden>♾️</span> Helitaan joogto ah — waligaa
+                </li>
+              </ul>
+            )}
           </div>
         </aside>
       </div>
