@@ -5,6 +5,8 @@ import Catalog from "./pages/Catalog";
 import CourseDetail from "./pages/CourseDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Checkout from "./pages/Checkout";
@@ -23,6 +25,8 @@ export default function App() {
         <Route path="course/:courseId" element={<CourseDetail />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<Dashboard />} />

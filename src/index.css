@@ -615,6 +615,7 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .auth-page { display: flex; justify-content: center; padding: 3rem 0; }
 .auth-card { width: 100%; max-width: 410px; padding: 1.75rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
 .auth-card h1 { font-size: 1.5rem; }
+.auth-forgot { margin-top: -0.6rem; text-align: right; }
 
 /* ── Dashboard ─────────────────────────────────────────────── */
 .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.4rem; }

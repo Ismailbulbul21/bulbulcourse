@@ -55,6 +55,10 @@ export default function Login() {
           {errors.password && <span className="field-error">{errors.password.message}</span>}
         </label>
 
+        <p className="muted auth-forgot">
+          <Link to="/forgot-password">Furaha sirta ma illowday? / Forgot password?</Link>
+        </p>
+
         <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
           {isSubmitting ? (
             "Logging in…"
