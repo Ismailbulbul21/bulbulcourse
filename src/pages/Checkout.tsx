@@ -69,7 +69,7 @@ export default function Checkout() {
       <div className="page page-narrow">
         <div className="card empty-state">
           <h3>🔜 Koorsadan weli lama furin</h3>
-          <p>Dhawaan ayaa la furayaa — soo laabo mar dambe.</p>
+          <p>Goordhow ayee soo baxaysaa — soo laabo mar dambe.</p>
           <Link to={`/course/${course.id}`} className="btn btn-primary">
             ← Ku laabo koorsada
           </Link>

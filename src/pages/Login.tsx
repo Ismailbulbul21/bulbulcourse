@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginSchema, type LoginInput } from "../schemas/auth.schema";
 import { supabase, toError } from "../lib/supabase";
+import PasswordInput from "../components/PasswordInput";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ export default function Login() {
 
         <label>
           Password
-          <input type="password" autoComplete="current-password" {...register("password")} />
+          <PasswordInput autoComplete="current-password" {...register("password")} />
           {errors.password && <span className="field-error">{errors.password.message}</span>}
         </label>
 

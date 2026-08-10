@@ -199,9 +199,9 @@ export default function CourseDetail() {
           <div className="purchase-body">
             {course.status === "coming_soon" ? (
               <div className="coming-soon-panel">
-                <div className="coming-soon-badge-big">🔜 DHAWAAN</div>
+                <div className="coming-soon-badge-big">🔜 GOORDHOW</div>
                 <p>
-                  Koorsadan waxay furmaysaa <strong>dhawaan</strong>. Soo laabo si
+                  Koorsadan waxay furmaysaa <strong>Goordhow</strong>. Soo laabo si
                   aad u iibsato marka la furo!
                 </p>
               </div>

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signupSchema, type SignupInput } from "../schemas/auth.schema";
 import { supabase, toError } from "../lib/supabase";
+import PasswordInput from "../components/PasswordInput";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ export default function Signup() {
 
         <label>
           Furaha sirta <span className="bi-en">Password</span>
-          <input type="password" autoComplete="new-password" {...register("password")} />
+          <PasswordInput autoComplete="new-password" {...register("password")} />
           {errors.password && <span className="field-error">{errors.password.message}</span>}
         </label>
 

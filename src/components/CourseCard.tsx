@@ -40,7 +40,7 @@ export default function CourseCard({ course }: { course: Course }) {
           </div>
         )}
         {comingSoon ? (
-          <span className="soon-badge">🔜 DHAWAAN</span>
+          <span className="soon-badge">🔜 GOORDHOW</span>
         ) : (
           discounted && (
             <span className="discount-badge">-{discountPct(course)}%</span>
@@ -59,7 +59,7 @@ export default function CourseCard({ course }: { course: Course }) {
         <div className="course-card-footer">
           {comingSoon ? (
             <span className="course-card-price soon-text">
-              Dhawaan ayaa la furayaa
+              Goordhow ayee soo baxaysaa
             </span>
           ) : (
             <span className="course-card-price">
