@@ -1,5 +1,5 @@
 import { supabase, queryTimeoutSignal, toError } from "../lib/supabase";
-import type { Course, SyllabusModule, SyllabusRow } from "../types/db";
+import type { Course, CourseType, SyllabusModule, SyllabusRow } from "../types/db";
 
 export const PAGE_SIZE = 9;
 
@@ -133,6 +133,9 @@ export const CourseService = {
     price: number;
     compare_at_price: number | null;
     created_by: string;
+    course_type?: CourseType;
+    live_starts_on?: string | null;
+    live_ends_on?: string | null;
   }): Promise<Course> {
     const { data, error } = await supabase
       .from("courses")

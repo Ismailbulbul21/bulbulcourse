@@ -1,5 +1,7 @@
 export type Role = "student" | "admin";
 export type CourseStatus = "draft" | "coming_soon" | "published" | "archived";
+/** Recorded = video lessons. Live = scheduled classes + a WhatsApp group. */
+export type CourseType = "recorded" | "live";
 export type PurchaseStatus =
   | "pending"
   | "processing"
@@ -30,6 +32,11 @@ export interface Course {
   currency: string;
   thumbnail_url: string | null;
   status: CourseStatus;
+  /** Existing courses default to "recorded" — they are unaffected by live courses. */
+  course_type: CourseType;
+  /** Live courses only: the overall run dates (per-class dates live in live_sessions). */
+  live_starts_on: string | null;
+  live_ends_on: string | null;
   created_by: string | null;
   deleted_at: string | null;
   created_at: string;
@@ -135,4 +142,38 @@ export interface SyllabusModule {
   title: string;
   sort_order: number;
   lessons: SyllabusLesson[];
+}
+
+/** One scheduled class of a live course. Public — sold before purchase. */
+export interface LiveSession {
+  id: string;
+  course_id: string;
+  title: string;
+  description: string;
+  starts_at: string;
+  ends_at: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * The WhatsApp group link. Readable ONLY by someone with a completed
+ * purchase of this course (or an admin) — enforced by RLS, not the UI.
+ */
+export interface LiveCourseAccess {
+  course_id: string;
+  whatsapp_group_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/** A completed buyer of a course — admin view, for WhatsApp approval. */
+export interface CourseBuyer {
+  purchase_id: string;
+  user_id: string;
+  full_name: string;
+  phone_number: string | null;
+  amount: number;
+  created_at: string;
 }

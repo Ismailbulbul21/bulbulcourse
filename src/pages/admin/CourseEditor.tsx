@@ -3,19 +3,20 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import CourseForm from "../../components/admin/CourseForm";
 import CurriculumEditor from "../../components/admin/CurriculumEditor";
+import LiveClassesEditor from "../../components/admin/LiveClassesEditor";
 import { CourseService } from "../../services/courses.service";
 import { ModuleService } from "../../services/modules.service";
 import { StorageService } from "../../services/storage.service";
+import { LiveService } from "../../services/live.service";
 import Spinner from "../../components/Spinner";
 import ErrorMessage from "../../components/ErrorMessage";
 import type { CourseInput } from "../../schemas/course.schema";
 
-type Tab = "details" | "curriculum" | "publish";
+type Tab = "details" | "curriculum" | "live" | "publish";
 
 export default function CourseEditor() {
   const { courseId } = useParams<{ courseId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const tab = (searchParams.get("tab") as Tab) || "details";
   const queryClient = useQueryClient();
   const [detailsError, setDetailsError] = useState<string | null>(null);
   const [detailsSaved, setDetailsSaved] = useState(false);
@@ -28,10 +29,24 @@ export default function CourseEditor() {
     enabled: Boolean(courseId),
   });
 
+  const isLive = courseQuery.data?.course_type === "live";
+
   const modulesQuery = useQuery({
     queryKey: ["course-lessons", courseId],
     queryFn: () => ModuleService.listWithLessons(courseId!),
-    enabled: Boolean(courseId),
+    enabled: Boolean(courseId) && courseQuery.isSuccess && !isLive,
+  });
+
+  const sessionsQuery = useQuery({
+    queryKey: ["live-sessions", courseId],
+    queryFn: () => LiveService.sessions(courseId!),
+    enabled: Boolean(courseId) && courseQuery.isSuccess && isLive,
+  });
+
+  const waQuery = useQuery({
+    queryKey: ["live-whatsapp", courseId],
+    queryFn: () => LiveService.whatsappUrl(courseId!),
+    enabled: Boolean(courseId) && courseQuery.isSuccess && isLive,
   });
 
   function invalidateCourse() {
@@ -58,15 +73,34 @@ export default function CourseEditor() {
     (n, m) => n + m.lessons.filter((l) => l.video_key).length,
     0
   );
+  const sessions = sessionsQuery.data ?? [];
+  const hasWhatsapp = Boolean(waQuery.data);
+
+  // A live course is ready when it has classes and a group link; a recorded
+  // course still needs lessons, exactly as before.
+  const readyToPublish = isLive ? sessions.length > 0 && hasWhatsapp : lessonCount > 0;
+
+  const contentTab: Tab = isLive ? "live" : "curriculum";
+  const tabs: Tab[] = ["details", contentTab, "publish"];
+  const requested = (searchParams.get("tab") as Tab) || "details";
+  const tab: Tab = tabs.includes(requested) ? requested : "details";
 
   function switchTab(next: Tab) {
     setSearchParams({ tab: next });
+  }
+
+  function tabLabel(t: Tab): string {
+    if (t === "details") return "1 · Details";
+    if (t === "curriculum") return "2 · Curriculum";
+    if (t === "live") return "2 · Live classes";
+    return "3 · Publish";
   }
 
   async function saveDetails(values: CourseInput) {
     setDetailsError(null);
     setDetailsSaved(false);
     try {
+      const live = values.course_type === "live";
       await CourseService.update(course.id, {
         title: values.title,
         description: values.description,
@@ -76,6 +110,8 @@ export default function CourseEditor() {
           values.compare_at_price.trim() !== "" && Number(values.compare_at_price) > 0
             ? Number(values.compare_at_price)
             : null,
+        live_starts_on: live && values.live_starts_on ? values.live_starts_on : null,
+        live_ends_on: live && values.live_ends_on ? values.live_ends_on : null,
       });
       invalidateCourse();
       setDetailsSaved(true);
@@ -108,18 +144,21 @@ export default function CourseEditor() {
           </Link>
           <h1>{course.title}</h1>
         </div>
-        <span className={`badge badge-${course.status}`}>{course.status}</span>
+        <div className="page-header-badges">
+          {isLive && <span className="badge badge-live">🔴 TOOS</span>}
+          <span className={`badge badge-${course.status}`}>{course.status}</span>
+        </div>
       </div>
 
       <div className="tabs">
-        {(["details", "curriculum", "publish"] as Tab[]).map((t) => (
+        {tabs.map((t) => (
           <button
             key={t}
             type="button"
             className={`tab ${tab === t ? "tab-active" : ""}`}
             onClick={() => switchTab(t)}
           >
-            {t === "details" ? "1 · Details" : t === "curriculum" ? "2 · Curriculum" : "3 · Publish"}
+            {tabLabel(t)}
           </button>
         ))}
       </div>
@@ -129,6 +168,7 @@ export default function CourseEditor() {
           <div className="card">
             {detailsSaved && <div className="success-box">Course details saved.</div>}
             <CourseForm
+              lockType
               defaultValues={{
                 title: course.title,
                 description: course.description,
@@ -138,6 +178,9 @@ export default function CourseEditor() {
                 price: String(course.price),
                 compare_at_price:
                   course.compare_at_price != null ? String(course.compare_at_price) : "",
+                course_type: course.course_type,
+                live_starts_on: course.live_starts_on ?? "",
+                live_ends_on: course.live_ends_on ?? "",
               }}
               submitLabel="Save details"
               onSubmit={saveDetails}
@@ -168,6 +211,8 @@ export default function CourseEditor() {
       )}
 
       {tab === "curriculum" && <CurriculumEditor courseId={course.id} />}
+
+      {tab === "live" && <LiveClassesEditor courseId={course.id} />}
 
       {tab === "publish" && (
         <div className="card publish-panel">
@@ -219,29 +264,55 @@ export default function CourseEditor() {
           )}
 
           <h3>Publish checklist</h3>
-          <ul className="publish-checklist">
-            <li className={modules.length > 0 ? "check-ok" : "check-missing"}>
-              {modules.length > 0 ? "✓" : "○"} At least one module ({modules.length})
-            </li>
-            <li className={lessonCount > 0 ? "check-ok" : "check-missing"}>
-              {lessonCount > 0 ? "✓" : "○"} At least one lesson ({lessonCount})
-            </li>
-            <li className={lessonsWithVideo === lessonCount && lessonCount > 0 ? "check-ok" : "check-missing"}>
-              {lessonsWithVideo === lessonCount && lessonCount > 0 ? "✓" : "○"} Videos uploaded (
-              {lessonsWithVideo} of {lessonCount})
-            </li>
-            <li className={course.thumbnail_url ? "check-ok" : "check-missing"}>
-              {course.thumbnail_url ? "✓" : "○"} Thumbnail added
-            </li>
-          </ul>
+          {isLive ? (
+            <ul className="publish-checklist">
+              <li className={sessions.length > 0 ? "check-ok" : "check-missing"}>
+                {sessions.length > 0 ? "✓" : "○"} At least one class ({sessions.length})
+              </li>
+              <li className={hasWhatsapp ? "check-ok" : "check-missing"}>
+                {hasWhatsapp ? "✓" : "○"} WhatsApp group link added
+              </li>
+              <li className={course.live_starts_on ? "check-ok" : "check-missing"}>
+                {course.live_starts_on ? "✓" : "○"} Start date set
+              </li>
+              <li className={course.thumbnail_url ? "check-ok" : "check-missing"}>
+                {course.thumbnail_url ? "✓" : "○"} Thumbnail added
+              </li>
+            </ul>
+          ) : (
+            <ul className="publish-checklist">
+              <li className={modules.length > 0 ? "check-ok" : "check-missing"}>
+                {modules.length > 0 ? "✓" : "○"} At least one module ({modules.length})
+              </li>
+              <li className={lessonCount > 0 ? "check-ok" : "check-missing"}>
+                {lessonCount > 0 ? "✓" : "○"} At least one lesson ({lessonCount})
+              </li>
+              <li className={lessonsWithVideo === lessonCount && lessonCount > 0 ? "check-ok" : "check-missing"}>
+                {lessonsWithVideo === lessonCount && lessonCount > 0 ? "✓" : "○"} Videos uploaded (
+                {lessonsWithVideo} of {lessonCount})
+              </li>
+              <li className={course.thumbnail_url ? "check-ok" : "check-missing"}>
+                {course.thumbnail_url ? "✓" : "○"} Thumbnail added
+              </li>
+            </ul>
+          )}
 
           {setStatus.isError && <ErrorMessage error={setStatus.error} />}
 
-          {lessonCount === 0 && course.status !== "published" && (
+          {!readyToPublish && course.status !== "published" && (
             <div className="error-box">
-              You can't publish yet — this course has no lessons. Open the{" "}
-              <strong>Curriculum</strong> tab, add a module and at least one lesson,
-              then come back here.
+              {isLive ? (
+                <>
+                  You can't publish yet. Open the <strong>Live classes</strong> tab, add at
+                  least one class and paste the WhatsApp group link, then come back here.
+                </>
+              ) : (
+                <>
+                  You can't publish yet — this course has no lessons. Open the{" "}
+                  <strong>Curriculum</strong> tab, add a module and at least one lesson,
+                  then come back here.
+                </>
+              )}
             </div>
           )}
 
@@ -251,7 +322,7 @@ export default function CourseEditor() {
                 <button
                   type="button"
                   className="btn btn-primary btn-lg"
-                  disabled={lessonCount === 0 || setStatus.isPending}
+                  disabled={!readyToPublish || setStatus.isPending}
                   onClick={() => setStatus.mutate("published")}
                 >
                   {setStatus.isPending ? "Publishing…" : "🚀 Publish course"}
@@ -304,7 +375,7 @@ export default function CourseEditor() {
               </button>
             )}
           </div>
-          {lessonsWithVideo < lessonCount && lessonCount > 0 && (
+          {!isLive && lessonsWithVideo < lessonCount && lessonCount > 0 && (
             <p className="muted">
               Lessons without a video will show "No video yet" to students.
             </p>

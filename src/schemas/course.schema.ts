@@ -25,7 +25,26 @@ export const courseSchema = z.object({
         (!Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 10000),
       "Geli qiime sax ah (ama bannaan ka tag)"
     ),
-});
+  /** "recorded" keeps the existing video-lesson course exactly as it is. */
+  course_type: z.enum(["recorded", "live"]),
+  /** Live courses only. Plain YYYY-MM-DD from a date input, or "". */
+  live_starts_on: z.string(),
+  live_ends_on: z.string(),
+})
+  .refine(
+    (d) =>
+      d.course_type !== "live" ||
+      d.live_starts_on.trim() !== "",
+    { message: "Geli taariikhda bilowga", path: ["live_starts_on"] }
+  )
+  .refine(
+    (d) =>
+      d.course_type !== "live" ||
+      d.live_ends_on.trim() === "" ||
+      d.live_starts_on.trim() === "" ||
+      d.live_ends_on >= d.live_starts_on,
+    { message: "Taariikhda dhammaadka waa inay ka danbeysaa bilowga", path: ["live_ends_on"] }
+  );
 export type CourseInput = z.infer<typeof courseSchema>;
 
 export const lessonSchema = z.object({

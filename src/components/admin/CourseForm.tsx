@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   COURSE_CATEGORIES,
@@ -11,24 +11,52 @@ export default function CourseForm({
   submitLabel,
   onSubmit,
   serverError,
+  lockType = false,
 }: {
   defaultValues: CourseInput;
   submitLabel: string;
   onSubmit: (values: CourseInput) => Promise<void>;
   serverError?: string | null;
+  /** Editing an existing course: the type is fixed once lessons/classes exist. */
+  lockType?: boolean;
 }) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CourseInput>({
     resolver: zodResolver(courseSchema),
     defaultValues,
   });
 
+  const courseType = useWatch({ control, name: "course_type" });
+  const isLive = courseType === "live";
+
   return (
     <form className="form-card" onSubmit={handleSubmit(onSubmit)} noValidate>
       {serverError && <div className="error-box">{serverError}</div>}
+
+      <label>
+        Nooca koorsada <span className="bi-en">Course type</span>
+        <select {...register("course_type")} disabled={lockType}>
+          <option value="recorded">🎬 Recorded — casharro fiidyow ah</option>
+          <option value="live">🔴 Live (Toos) — fasallo toos ah + WhatsApp</option>
+        </select>
+        {lockType ? (
+          <span className="field-hint muted">
+            Nooca lama beddeli karo ka dib markii la abuuro.
+          </span>
+        ) : (
+          <span className="field-hint muted">
+            Recorded = ardaygu wuxuu daawadaa fiidyowyada. Live = ardaygu wuxuu
+            helaa jadwalka fasallada iyo link-ga group-ka WhatsApp.
+          </span>
+        )}
+        {errors.course_type && (
+          <span className="field-error">{errors.course_type.message}</span>
+        )}
+      </label>
 
       <label>
         Course title
@@ -47,6 +75,26 @@ export default function CourseForm({
           <span className="field-error">{errors.description.message}</span>
         )}
       </label>
+
+      {isLive && (
+        <div className="form-row">
+          <label>
+            Taariikhda bilowga <span className="bi-en">Starts</span>
+            <input type="date" {...register("live_starts_on")} />
+            {errors.live_starts_on && (
+              <span className="field-error">{errors.live_starts_on.message}</span>
+            )}
+          </label>
+
+          <label>
+            Taariikhda dhammaadka <span className="bi-en">Ends</span>
+            <input type="date" {...register("live_ends_on")} />
+            {errors.live_ends_on && (
+              <span className="field-error">{errors.live_ends_on.message}</span>
+            )}
+          </label>
+        </div>
+      )}
 
       <div className="form-row">
         <label>
