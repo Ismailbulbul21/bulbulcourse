@@ -136,3 +136,138 @@ export interface SyllabusModule {
   sort_order: number;
   lessons: SyllabusLesson[];
 }
+
+// ── Hire me ────────────────────────────────────────────────────────────
+
+/** Key/value site settings. Public keys are readable by everyone. */
+export interface AppSetting {
+  key: string;
+  value: string;
+  is_public: boolean;
+  updated_at: string;
+}
+
+export type ServiceCategory = "mobile" | "web" | "system" | "other";
+
+export interface ServicePackage {
+  id: string;
+  category: ServiceCategory;
+  title: string;
+  description: string;
+  /** null = "ask for a price". */
+  price_from: number | null;
+  currency: string;
+  delivery_time: string;
+  features: string[];
+  is_featured: boolean;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortfolioProject {
+  id: string;
+  title: string;
+  description: string;
+  category: ServiceCategory;
+  image_url: string | null;
+  project_url: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type InquiryStatus = "new" | "contacted" | "quoted" | "won" | "lost";
+
+export interface ProjectInquiry {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  project_type: ServiceCategory;
+  package_id: string | null;
+  budget: string;
+  message: string;
+  status: InquiryStatus;
+  admin_note: string;
+  user_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── Booking ────────────────────────────────────────────────────────────
+
+export interface SessionType {
+  id: string;
+  title: string;
+  description: string;
+  duration_minutes: number;
+  /** Must be set before the session can be switched on. */
+  price: number | null;
+  currency: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Weekly teaching hours in Somalia time. weekday 0 = Sunday (Axad). */
+export interface AvailabilityRule {
+  id: string;
+  weekday: number;
+  start_time: string;
+  end_time: string;
+  created_at: string;
+}
+
+export interface BlockedDate {
+  day: string;
+  reason: string;
+  created_at: string;
+}
+
+export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled" | "expired";
+
+export interface Booking {
+  id: string;
+  user_id: string;
+  session_type_id: string;
+  starts_at: string;
+  ends_at: string;
+  status: BookingStatus;
+  hold_expires_at: string | null;
+  topic: string;
+  amount: number;
+  currency: string;
+  payment_channel: PaymentChannel | "FREE" | null;
+  payment_reference: string | null;
+  phone_number: string | null;
+  meeting_url: string | null;
+  admin_note: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingWithType extends Booking {
+  session_types: Pick<SessionType, "title" | "duration_minutes"> | null;
+}
+
+export interface AdminBookingRow extends BookingWithType {
+  profiles: { full_name: string } | null;
+}
+
+/** One open start time, from the get_available_slots RPC. */
+export interface Slot {
+  slot_start: string;
+  slot_end: string;
+}
+
+export interface BookingStats {
+  upcoming: number;
+  completed: number;
+  paid: number;
+  revenue: number;
+  new_requests: number;
+}
