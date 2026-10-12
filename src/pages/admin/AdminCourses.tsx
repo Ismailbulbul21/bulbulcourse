@@ -5,7 +5,6 @@ import { AdminService } from "../../services/admin.service";
 import { formatPrice } from "../../components/CourseCard";
 import Spinner from "../../components/Spinner";
 import ErrorMessage from "../../components/ErrorMessage";
-import AdminNav from "../../components/admin/AdminNav";
 import type { Course } from "../../types/db";
 
 export default function AdminCourses() {
@@ -57,7 +56,6 @@ export default function AdminCourses() {
 
   return (
     <div className="page">
-      <AdminNav />
       <div className="admin-hero">
         <div>
           <p className="wizard-step">Creator Studio</p>

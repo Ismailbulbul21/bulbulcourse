@@ -1,22 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
-import { SettingsService, isOn } from "../services/settings.service";
 import Logo from "./Logo";
 
 export default function Layout() {
   const { user, profile, isAdmin, signOut } = useAuthStore();
   const navigate = useNavigate();
-
-  // Booking and Hire me only appear once switched on in Admin (admins
-  // always see them, so they can preview before going live).
-  const settingsQuery = useQuery({
-    queryKey: ["app-settings", user?.id ?? "anon"],
-    queryFn: () => SettingsService.all(),
-    staleTime: 60_000,
-  });
-  const showBooking = isAdmin || isOn(settingsQuery.data, "booking_enabled");
-  const showHire = isAdmin || isOn(settingsQuery.data, "services_enabled");
 
   async function handleSignOut() {
     await signOut();
@@ -34,8 +22,6 @@ export default function Layout() {
           <NavLink to="/" end>
             Courses
           </NavLink>
-          {showBooking && <NavLink to="/book">Book a session</NavLink>}
-          {showHire && <NavLink to="/hire">Hire me</NavLink>}
           {user && <NavLink to="/dashboard">My Learning</NavLink>}
           {isAdmin && <NavLink to="/admin">Admin</NavLink>}
         </nav>

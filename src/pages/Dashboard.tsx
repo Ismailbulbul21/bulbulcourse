@@ -6,7 +6,6 @@ import { ProgressService } from "../services/progress.service";
 import { useAuthStore } from "../stores/authStore";
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
-import MyBookings from "../components/MyBookings";
 
 export default function Dashboard() {
   const { profile } = useAuthStore();
@@ -52,8 +51,6 @@ export default function Dashboard() {
   return (
     <div className="page">
       <h1>Welcome{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""} 👋</h1>
-
-      <MyBookings />
 
       {purchases.length === 0 ? (
         <div className="empty-state">
