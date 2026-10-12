@@ -911,6 +911,48 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .upload-cancel { margin-left: 0.75rem; }
 .resource-list li { display: flex; justify-content: space-between; align-items: center; padding: 0.38rem 0; }
 
+/* -- About me ----------------------------------------------- */
+.about-hero { margin-bottom: 1.6rem; }
+.about-role { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin: 0 0 0.9rem; }
+.about-lead { max-width: 65ch; font-size: 1.02rem; line-height: 1.65; }
+
+.about-section { margin-top: 2.2rem; }
+.about-section > h2 { margin-bottom: 0.9rem; }
+
+.about-apps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
+.app-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+.app-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
+.app-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.app-tagline { color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 0.15rem 0 0; }
+.app-what { margin: 0.9rem 0 0; line-height: 1.6; }
+.app-features { margin: 0.9rem 0 1.2rem; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
+.app-features li { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+.app-features li::marker { color: var(--primary); }
+/* Pinned to the bottom so cards of different heights still line their buttons up. */
+.app-card .btn { margin-top: auto; align-self: flex-start; }
+
+.tech-list { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.45rem; }
+.tech-list li { line-height: 1.5; }
+.tech-list li::marker { color: var(--primary); }
+.about-tech-note { margin-top: 1rem; }
+.about-contact p { margin: 0; }
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 940px) {
   .course-detail-grid { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -921,8 +963,9 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 }
 @media (max-width: 600px) {
   .navbar { flex-wrap: wrap; gap: 0.5rem; padding: 0.7rem 1rem; }
-  .nav-links { order: 3; width: 100%; }
+  .nav-links { order: 3; flex: 1 1 100%; }
   .form-row { grid-template-columns: 1fr; }
   .stat-row { grid-template-columns: 1fr; }
   .main { padding: 1.25rem 0.9rem 3rem; }
+  .about-apps { grid-template-columns: 1fr; }
 }

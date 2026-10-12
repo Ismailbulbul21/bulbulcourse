@@ -15,6 +15,7 @@ import AdminCourses from "./pages/admin/AdminCourses";
 import CourseCreate from "./pages/admin/CourseCreate";
 import CourseEditor from "./pages/admin/CourseEditor";
 import LessonEditor from "./pages/admin/LessonEditor";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="signup" element={<Signup />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="reset-password" element={<ResetPassword />} />
+        <Route path="about" element={<About />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<Dashboard />} />

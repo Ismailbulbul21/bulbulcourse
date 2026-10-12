@@ -22,6 +22,7 @@ export default function Layout() {
           <NavLink to="/" end>
             Courses
           </NavLink>
+          <NavLink to="/about">About me</NavLink>
           {user && <NavLink to="/dashboard">My Learning</NavLink>}
           {isAdmin && <NavLink to="/admin">Admin</NavLink>}
         </nav>
