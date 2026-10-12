@@ -2,9 +2,13 @@
  * About me — who builds BulbulCourses, and the apps already shipped.
  *
  * Static on purpose: no database, no tables, no admin screen. Editing the
- * arrays below is the whole workflow, so nothing here can affect courses,
+ * array below is the whole workflow, so nothing here can affect courses,
  * payments or purchases.
+ *
+ * Each app carries its own brand colour, passed to CSS as --accent, so a
+ * card is tinted by the app it is describing rather than by the site.
  */
+import type { CSSProperties } from "react";
 
 /** Shown as the page heading. Change this one line to change it everywhere. */
 const ME = {
@@ -20,6 +24,10 @@ type App = {
   /** Plain-language answer to "what is this app for?" */
   what: string;
   features: string[];
+  /** Real launcher icon, resized to 256px — see public/apps/. */
+  icon: string;
+  /** RGB triple from the app's own icon. Not hex: it is used inside rgb() with an alpha. */
+  accent: string;
   /** Left out when the app has no public listing yet. */
   store?: { label: string; url: string };
   status?: string;
@@ -29,6 +37,8 @@ const APPS: App[] = [
   {
     name: "Qorsheyn",
     tagline: "A daily planner, written entirely in Somali",
+    icon: "/apps/qorsheyn.png",
+    accent: "108 59 214",
     what:
       "Qorsheyn is for anyone who wants to plan their day and actually finish it. You write down what you plan to do, set the goals you are working toward, and the app reminds you. Everything in it is in Somali — there is no English to translate in your head first.",
     features: [
@@ -46,6 +56,8 @@ const APPS: App[] = [
   {
     name: "Socod",
     tagline: "Walking, counted and turned into a competition",
+    icon: "/apps/socod.png",
+    accent: "70 24 146",
     what:
       "Socod counts your steps by itself, using the motion sensors already inside your phone — you do not have to start or stop anything. You set the number of steps you want to reach each day, and then you walk against everyone else on the leaderboard instead of walking alone.",
     features: [
@@ -64,6 +76,8 @@ const APPS: App[] = [
   {
     name: "JirDhis",
     tagline: "A full exercise library in Somali, for home or the gym",
+    icon: "/apps/jirdhis.png",
+    accent: "11 91 245",
     what:
       "JirDhis teaches you how to exercise properly in your own language. Every movement is explained in Somali, with a video showing it being done, so you are not copying a picture and guessing. It works whether you train at home with nothing or at a gym with equipment.",
     features: [
@@ -78,6 +92,8 @@ const APPS: App[] = [
   {
     name: "Baro-Ai",
     tagline: "Casharradaada u beddel hab waxbarasho",
+    icon: "/apps/baro-ai.png",
+    accent: "22 163 74",
     what:
       "Baro-Ai turns the material you already study from into something you can revise properly. You give it your own pages — a PDF, photos of your textbook, or notes you typed — and it builds the study tools out of those exact pages. It teaches your syllabus, not a general version of the subject.",
     features: [
@@ -88,61 +104,55 @@ const APPS: App[] = [
       "Cod — your study guide read aloud, for revising while walking or resting your eyes",
       "No ads, no trackers, and no selling your data",
     ],
-    status: "Coming soon — Android and iOS",
+    status: "Coming soon",
   },
-];
-
-const TECH = [
-  "React and TypeScript for the web",
-  "Android and iOS for mobile",
-  "Supabase and Postgres, with row-level security on every table",
-  "Mobile-money payments — EVC Plus, ZAAD and Sahal",
-  "Object storage with signed links, so paid video stays paid",
 ];
 
 export default function About() {
   return (
-    <div className="page">
-      <header className="about-hero">
-        <h1>{ME.name}</h1>
-        <p className="about-role">
-          {ME.role} · {ME.place}
-        </p>
+    <div className="page about-page">
+      <section className="about-hero">
+        <div className="about-glow" aria-hidden="true" />
+        <p className="about-eyebrow">About me</p>
+        <h1 className="about-name">{ME.name}</h1>
+        <div className="about-pills">
+          <span className="about-pill">{ME.role}</span>
+          <span className="about-pill">{ME.place}</span>
+        </div>
         <p className="about-lead">
           I build apps for Somali people in Somali. Not apps translated into
           Somali afterwards — apps where the language, the examples and the way
           you pay were the starting point. Below is what I have shipped so far,
           and what each one is for. You are reading this on the newest one.
         </p>
-      </header>
-
-      <div className="stat-row">
-        <div className="stat-card">
-          <span className="stat-num">4</span>
-          <span className="stat-label">Mobile apps built</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-num">2</span>
-          <span className="stat-label">Live on Google Play</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-num">1</span>
-          <span className="stat-label">Course platform — this one</span>
-        </div>
-      </div>
+      </section>
 
       <section className="about-section">
-        <h2>The apps I have built</h2>
+        <h2 className="about-h2">The apps I have built</h2>
         <div className="about-apps">
           {APPS.map((app) => (
-            <article key={app.name} className="app-card">
-              <div className="app-card-head">
-                <div>
+            <article
+              key={app.name}
+              className="app-card"
+              style={{ "--accent": app.accent } as CSSProperties}
+            >
+              <div className="app-card-wash" aria-hidden="true" />
+
+              <header className="app-card-top">
+                <img
+                  className="app-icon"
+                  src={app.icon}
+                  alt={`${app.name} app icon`}
+                  width={72}
+                  height={72}
+                  loading="lazy"
+                />
+                <div className="app-id">
                   <h3 className="app-name">{app.name}</h3>
                   <p className="app-tagline">{app.tagline}</p>
                 </div>
-                {app.status && <span className="badge badge-coming_soon">{app.status}</span>}
-              </div>
+                {app.status && <span className="app-status">{app.status}</span>}
+              </header>
 
               <p className="app-what">{app.what}</p>
 
@@ -154,12 +164,13 @@ export default function About() {
 
               {app.store && (
                 <a
-                  className="btn btn-secondary btn-sm"
+                  className="app-store"
                   href={app.store.url}
                   target="_blank"
                   rel="noreferrer"
                 >
                   Get it on {app.store.label}
+                  <span aria-hidden="true">→</span>
                 </a>
               )}
             </article>
@@ -168,8 +179,8 @@ export default function About() {
       </section>
 
       <section className="about-section">
-        <h2>BulbulCourses — the site you are on</h2>
-        <div className="card">
+        <div className="about-platform">
+          <h2>BulbulCourses — the site you are on</h2>
           <p>
             This platform is where I teach what I know. Courses are recorded in
             Somali, split into modules and lessons, and you buy one with the
@@ -181,26 +192,12 @@ export default function About() {
       </section>
 
       <section className="about-section">
-        <h2>How I build</h2>
-        <div className="card">
-          <ul className="tech-list">
-            {TECH.map((t) => (
-              <li key={t}>{t}</li>
-            ))}
-          </ul>
-          <p className="muted about-tech-note">
-            I also build apps and systems for other people — mobile apps,
-            websites and the admin dashboards behind them.
-          </p>
-        </div>
-      </section>
-
-      <section className="about-section">
-        <h2>Get in touch</h2>
-        <div className="card about-contact">
-          <p>
-            Email me at <a href={`mailto:${ME.email}`}>{ME.email}</a>.
-          </p>
+        <div className="about-contact">
+          <h2>Get in touch</h2>
+          <p>Building something, or stuck on one of the apps? Write to me.</p>
+          <a className="about-mail" href={`mailto:${ME.email}`}>
+            {ME.email}
+          </a>
         </div>
       </section>
     </div>

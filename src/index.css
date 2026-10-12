@@ -912,46 +912,222 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
 .resource-list li { display: flex; justify-content: space-between; align-items: center; padding: 0.38rem 0; }
 
 /* -- About me ----------------------------------------------- */
-.about-hero { margin-bottom: 1.6rem; }
-.about-role { color: var(--muted); font-weight: 600; font-size: 0.95rem; margin: 0 0 0.9rem; }
-.about-lead { max-width: 65ch; font-size: 1.02rem; line-height: 1.65; }
+/* Each .app-card sets --accent to an "R G B" triple taken from that app's
+   own icon, so every tint below is the app's colour, not the site's. */
 
-.about-section { margin-top: 2.2rem; }
-.about-section > h2 { margin-bottom: 0.9rem; }
-
-.about-apps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
-.app-card {
-  background: var(--surface);
+.about-hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 3.2rem 1.25rem 3.4rem;
+  margin-bottom: 2.6rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.4rem;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
+  border-radius: 26px;
+  background: radial-gradient(120% 140% at 50% 0%, #efecff 0%, #f9f8ff 46%, var(--surface) 100%);
 }
-.app-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
-.app-name {
-  font-size: 1.25rem;
+.about-glow {
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  width: 760px;
+  height: 440px;
+  max-width: 160%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.38), rgba(95, 91, 241, 0.14) 45%, transparent 70%);
+  filter: blur(64px);
+  pointer-events: none;
+}
+.about-eyebrow {
+  position: relative;
+  margin: 0 0 0.7rem;
+  font-size: 0.72rem;
   font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--primary-deep);
+}
+.about-name {
+  position: relative;
   margin: 0;
-  background: var(--grad);
+  font-size: clamp(2.3rem, 7vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 48%, #d946ef 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-.app-tagline { color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 0.15rem 0 0; }
-.app-what { margin: 0.9rem 0 0; line-height: 1.6; }
-.app-features { margin: 0.9rem 0 1.2rem; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
-.app-features li { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
-.app-features li::marker { color: var(--primary); }
-/* Pinned to the bottom so cards of different heights still line their buttons up. */
-.app-card .btn { margin-top: auto; align-self: flex-start; }
+.about-pills {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.05rem;
+}
+.about-pill {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 0.35rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  box-shadow: var(--shadow-sm);
+}
+.about-lead {
+  position: relative;
+  max-width: 60ch;
+  margin: 1.4rem auto 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
 
-.tech-list { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.45rem; }
-.tech-list li { line-height: 1.5; }
-.tech-list li::marker { color: var(--primary); }
-.about-tech-note { margin-top: 1rem; }
-.about-contact p { margin: 0; }
+.about-section { margin-top: 2.8rem; }
+.about-h2 {
+  margin-bottom: 1.6rem;
+  font-size: 1.7rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  text-align: center;
+}
+
+.about-apps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; }
+.app-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.app-card:hover {
+  transform: translateY(-4px);
+  border-color: rgb(var(--accent) / 0.4);
+  box-shadow: 0 18px 44px rgb(var(--accent) / 0.22);
+}
+/* The accent only washes the top of the card, so the text stays on white. */
+.app-card-wash {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 160px;
+  background: linear-gradient(180deg, rgb(var(--accent) / 0.13), rgb(var(--accent) / 0));
+  pointer-events: none;
+}
+.app-card-top { position: relative; display: flex; align-items: center; gap: 1rem; }
+.app-icon {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgb(var(--accent) / 0.4);
+}
+.app-id { min-width: 0; }
+.app-name {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgb(var(--accent));
+}
+.app-tagline {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.app-status {
+  align-self: flex-start;
+  margin-left: auto;
+  white-space: nowrap;
+  background: rgb(var(--accent) / 0.12);
+  color: rgb(var(--accent));
+  border: 1px solid rgb(var(--accent) / 0.32);
+  border-radius: 999px;
+  padding: 0.26rem 0.72rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+.app-what { position: relative; margin: 1.15rem 0 0; line-height: 1.65; }
+.app-features {
+  position: relative;
+  list-style: none;
+  margin: 1.15rem 0 1.4rem;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.app-features li {
+  position: relative;
+  padding-left: 1.6rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+/* A small accent square instead of a bullet. */
+.app-features li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: rgb(var(--accent) / 0.85);
+}
+.app-store {
+  position: relative;
+  margin-top: auto;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.15rem;
+  border-radius: 12px;
+  background: rgb(var(--accent));
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 8px 22px rgb(var(--accent) / 0.38);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.app-store:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+.about-platform,
+.about-contact { border-radius: 22px; padding: 2.1rem; text-align: center; }
+.about-platform {
+  background: linear-gradient(135deg, #eef0ff, #f7edff);
+  border: 1px solid rgba(95, 91, 241, 0.22);
+}
+.about-platform h2 { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; }
+.about-platform p { max-width: 62ch; margin: 0.7rem auto 0; line-height: 1.7; }
+.about-contact { background: var(--grad); color: #fff; box-shadow: var(--shadow-lg); }
+.about-contact h2 { font-size: 1.4rem; font-weight: 900; color: #fff; }
+.about-contact p { margin: 0.5rem 0 1.3rem; color: rgba(255, 255, 255, 0.88); }
+.about-mail {
+  display: inline-block;
+  padding: 0.65rem 1.3rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-weight: 700;
+  word-break: break-all;
+}
+.about-mail:hover { background: rgba(255, 255, 255, 0.26); }
+
+@media (prefers-reduced-motion: reduce) {
+  .app-card,
+  .app-store { transition: none; }
+  .app-card:hover,
+  .app-store:hover { transform: none; }
+}
 
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 940px) {
@@ -968,4 +1144,11 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
   .stat-row { grid-template-columns: 1fr; }
   .main { padding: 1.25rem 0.9rem 3rem; }
   .about-apps { grid-template-columns: 1fr; }
+  .about-hero { padding: 2.2rem 1rem 2.4rem; border-radius: 20px; margin-bottom: 2rem; }
+  .about-lead { font-size: 1rem; }
+  .about-h2 { font-size: 1.45rem; }
+  .app-card { padding: 1.2rem; border-radius: 18px; }
+  .app-icon { width: 60px; height: 60px; border-radius: 15px; }
+  .app-name { font-size: 1.25rem; }
+  .about-platform, .about-contact { padding: 1.5rem; border-radius: 18px; }
 }
