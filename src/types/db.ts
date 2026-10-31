@@ -80,6 +80,8 @@ export interface Purchase {
   payment_channel: PaymentChannel | null;
   payment_reference: string | null;
   phone_number: string | null;
+  failure_code: string | null;
+  failure_reason: string | null;
   created_at: string;
   updated_at: string;
 }

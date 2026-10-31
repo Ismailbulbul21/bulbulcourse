@@ -82,7 +82,16 @@ Deno.serve(async (req: Request) => {
       .select("id, title, price, currency, status, deleted_at")
       .eq("id", courseId)
       .maybeSingle();
-    if (!course || course.status !== "published" || course.deleted_at) {
+    const { data: buyerProfile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    // Drafts are payable by the admin only, so a real test charge never needs a public listing.
+    const canBuyStatus =
+      course?.status === "published" ||
+      (course?.status === "draft" && buyerProfile?.role === "admin");
+    if (!course || !canBuyStatus || course.deleted_at) {
       return fail(404, "not_found", "This course is not available for purchase.");
     }
 
@@ -243,13 +252,43 @@ Deno.serve(async (req: Request) => {
       waafiResult?.responseMsg ??
       "The payment was declined by the provider.";
 
+    const lowBalance = /haraag|kuguma filna|insufficient|not enough/i.test(String(declineMsg));
+    const failureCode = lowBalance
+      ? "insufficient_balance"
+      : String(waafiResult?.responseCode ?? "unknown");
+
     await admin
       .from("purchases")
-      .update({ status: "failed", payment_reference: referenceId })
+      .update({
+        status: "failed",
+        payment_reference: referenceId,
+        failure_code: failureCode,
+        // Provider text can quote the customer's wallet balance, so digits are removed.
+        failure_reason: String(declineMsg).replace(/\d+([.,]\d+)?/g, "#").slice(0, 300),
+      })
       .eq("id", purchase.id);
 
-    console.error("Payment declined:", declineMsg);
-    return fail(402, "payment_declined", `Payment declined: ${declineMsg}`);
+    console.error("Payment declined:", failureCode);
+
+    if (lowBalance) {
+      return fail(
+        402,
+        "insufficient_balance",
+        `Haraaga xisaabtaadu kuma filna koorsadan ($${amount}). Fadlan lacag ku shubo, kadibna mar kale isku day.`
+      );
+    }
+    if (/reject|cancel|time.?out|expired/i.test(String(declineMsg))) {
+      return fail(
+        402,
+        "not_approved",
+        "Codsiga lacagta lagama ansixin taleefankaaga, lacagna lagaama jarin. Mar kale isku day, oo ansixi codsiga marka uu kuu soo baxo."
+      );
+    }
+    return fail(
+      402,
+      "payment_declined",
+      `Lacag bixintu way fashilantay: ${declineMsg}. Fadlan hubi lambarkaaga, kadibna mar kale isku day.`
+    );
   } catch (e) {
     console.error("create-payment error:", e);
     return fail(500, "internal", "An unexpected error occurred. Please try again.");
