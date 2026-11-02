@@ -1,6 +1,6 @@
-# Dhis Dukaan Online: course plan
+# Barashada Web Development with AI: course plan
 
-**Title:** Dhis Dukaan Online oo Lacag Qaata: Web Development with AI
+**Title:** Barashada Web Development with AI
 **Price:** $40
 **Category:** Web Development
 **Length:** 20 lessons in 8 modules, 1 hour 25 minutes

@@ -113,6 +113,29 @@ export const CourseService = {
     return groupSyllabus((data ?? []) as SyllabusRow[]);
   },
 
+  /** First free preview lesson with a video, per course (readable by visitors). */
+  async previewLessons(
+    courseIds: string[]
+  ): Promise<Record<string, { id: string; duration_seconds: number }>> {
+    if (courseIds.length === 0) return {};
+    const { data, error } = await supabase
+      .from("lessons")
+      .select("id, course_id, duration_seconds, sort_order")
+      .in("course_id", courseIds)
+      .eq("is_preview", true)
+      .not("video_key", "is", null)
+      .order("sort_order")
+      .abortSignal(queryTimeoutSignal());
+    if (error) throw toError(error);
+    const byCourse: Record<string, { id: string; duration_seconds: number }> = {};
+    for (const row of data ?? []) {
+      if (!byCourse[row.course_id]) {
+        byCourse[row.course_id] = { id: row.id, duration_seconds: row.duration_seconds };
+      }
+    }
+    return byCourse;
+  },
+
   // ── Admin ──────────────────────────────────────────────────────────────
 
   async adminList(): Promise<Course[]> {

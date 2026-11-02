@@ -20,10 +20,10 @@ export default function Layout() {
         </Link>
         <nav className="nav-links">
           <NavLink to="/" end>
-            Courses
+            Koorsooyinka
           </NavLink>
-          <NavLink to="/about">About me</NavLink>
-          {user && <NavLink to="/dashboard">My Learning</NavLink>}
+          <NavLink to="/about">Aniga</NavLink>
+          {user && <NavLink to="/dashboard">Waxbarashadayda</NavLink>}
           {isAdmin && <NavLink to="/admin">Admin</NavLink>}
         </nav>
         <div className="nav-auth">
@@ -33,7 +33,7 @@ export default function Layout() {
                 {profile?.full_name || user.email}
               </Link>
               <button type="button" className="btn btn-ghost" onClick={handleSignOut}>
-                Sign out
+                Ka bax
               </button>
             </>
           ) : (
@@ -52,7 +52,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <footer className="footer">
-        © {new Date().getFullYear()} BulbulCourses — learn anything, anywhere.
+        © {new Date().getFullYear()} BulbulCourses — baro apps iyo websites, af Soomaali.
       </footer>
     </div>
   );

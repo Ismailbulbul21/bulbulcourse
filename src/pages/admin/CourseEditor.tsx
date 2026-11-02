@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import CourseForm from "../../components/admin/CourseForm";
 import CurriculumEditor from "../../components/admin/CurriculumEditor";
+import WhatsAppLinkForm from "../../components/admin/WhatsAppLinkForm";
 import { CourseService } from "../../services/courses.service";
 import { ModuleService } from "../../services/modules.service";
 import { StorageService } from "../../services/storage.service";
@@ -164,6 +165,8 @@ export default function CourseEditor() {
             />
             {thumbUploading && <Spinner label="Uploading thumbnail…" />}
           </div>
+
+          <WhatsAppLinkForm courseId={course.id} />
         </div>
       )}
 

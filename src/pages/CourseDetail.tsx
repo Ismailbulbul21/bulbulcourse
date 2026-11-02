@@ -1,10 +1,13 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CourseService } from "../services/courses.service";
 import { PurchaseService } from "../services/purchases.service";
 import { useAuthStore } from "../stores/authStore";
 import { discountPct, formatPrice, hasDiscount } from "../components/CourseCard";
 import CourseComments from "../components/CourseComments";
+import PreviewPlayer from "../components/PreviewPlayer";
+import WhatsAppGroup from "../components/WhatsAppGroup";
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
 
@@ -19,6 +22,7 @@ export function formatDuration(totalSeconds: number): string {
 export default function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAdmin } = useAuthStore();
 
   const courseQuery = useQuery({
@@ -39,7 +43,14 @@ export default function CourseDetail() {
     enabled: Boolean(courseId && user),
   });
 
-  if (courseQuery.isPending) return <Spinner label="Loading course…" />;
+  const loaded = Boolean(courseQuery.data);
+  useEffect(() => {
+    if (loaded && location.hash === "#preview") {
+      document.getElementById("preview")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [loaded, location.hash]);
+
+  if (courseQuery.isPending) return <Spinner label="Koorsada ayaa la soo saarayaa…" />;
   if (courseQuery.isError) {
     return <ErrorMessage error={courseQuery.error} onRetry={() => courseQuery.refetch()} />;
   }
@@ -47,16 +58,13 @@ export default function CourseDetail() {
   const course = courseQuery.data;
   const purchased = purchasedQuery.data === true;
   const canWatchEverything = purchased || isAdmin;
+  const comingSoon = course.status === "coming_soon";
   const syllabus = syllabusQuery.data ?? [];
-  const lessonCount = syllabus.reduce((n, m) => n + m.lessons.length, 0);
-  const previewCount = syllabus.reduce(
-    (n, m) => n + m.lessons.filter((l) => l.is_preview).length,
-    0
-  );
-  const totalDuration = syllabus.reduce(
-    (n, m) => n + m.lessons.reduce((s, l) => s + l.duration_seconds, 0),
-    0
-  );
+  const lessons = syllabus.flatMap((m) => m.lessons);
+  const totalDuration = lessons.reduce((s, l) => s + l.duration_seconds, 0);
+  const trailer = lessons.find((l) => l.is_preview && l.has_video) ?? null;
+  const discounted = hasDiscount(course);
+  const isFree = Number(course.price) <= 0;
 
   function goToLesson(lessonId: string) {
     if (!user) {
@@ -74,205 +82,126 @@ export default function CourseDetail() {
     navigate(`/checkout/${course.id}`);
   }
 
-  return (
-    <div className="page course-detail">
-      <div className="course-detail-grid">
-        {/* ── Left: what the course is ─────────────────────────── */}
-        <div className="course-detail-main">
-          <span className="badge badge-category">{course.category}</span>
-          <h1>{course.title}</h1>
-          <p className="course-detail-desc">{course.description}</p>
-          <p className="course-detail-meta muted">
-            {lessonCount} lessons
-            {totalDuration > 0 && ` · ${formatDuration(totalDuration)} of video`}
-            {previewCount > 0 && ` · ${previewCount} free preview`}
-          </p>
+  const buyButton = comingSoon ? (
+    <span className="rd-soon">Goordhow</span>
+  ) : canWatchEverything ? (
+    <button type="button" className="rd-btn rd-btn-primary" onClick={() => navigate(`/learn/${course.id}`)}>
+      ▶ Sii wad barashada
+    </button>
+  ) : (
+    <button type="button" className="rd-btn rd-buy-btn" onClick={goToCheckout}>
+      {isFree ? "Isku diiwaan geli bilaash" : "Iibso koorsada"}
+      <span aria-hidden>→</span>
+    </button>
+  );
 
-          <section className="syllabus">
-            <h2>Course content</h2>
-            {syllabusQuery.isPending ? (
-              <Spinner label="Loading syllabus…" />
-            ) : syllabusQuery.isError ? (
-              <ErrorMessage
-                error={syllabusQuery.error}
-                onRetry={() => syllabusQuery.refetch()}
-              />
-            ) : syllabus.length === 0 ? (
-              <p className="muted">The syllabus will be published soon.</p>
-            ) : (
-              syllabus.map((mod) => (
-                <div key={mod.id} className="syllabus-module">
-                  <div className="syllabus-module-head">
-                    <span>{mod.title}</span>
-                    <span className="muted">{mod.lessons.length} lessons</span>
-                  </div>
+  return (
+    <div className="rd rd-course">
+      <header className="rd-ch">
+        <div className="rd-ch-title">
+          <span className="rd-ch-meta">
+            {course.category === "Mobile" ? "Mobile App" : course.category}
+            {lessons.length > 0 && ` · ${lessons.length} cashar`}
+            {totalDuration > 0 && ` · ${formatDuration(totalDuration)}`}
+          </span>
+          <h1>{course.title}</h1>
+        </div>
+        <div className="rd-ch-buy">
+          {!comingSoon && !canWatchEverything && (
+            <div className="rd-ch-price">
+              {discounted && <s>{formatPrice(course.compare_at_price!, course.currency)}</s>}
+              <b>{formatPrice(course.price, course.currency)}</b>
+              {discounted && <span className="rd-save">-{discountPct(course)}%</span>}
+            </div>
+          )}
+          {buyButton}
+        </div>
+      </header>
+
+      <div className="rd-cgrid">
+        <PreviewPlayer
+          lessonId={trailer?.id ?? null}
+          durationSeconds={trailer?.duration_seconds ?? 0}
+          withSound={(location.state as { playPreview?: boolean } | null)?.playPreview === true}
+        />
+
+        <aside className="rd-clist">
+          {!comingSoon && (
+            <WhatsAppGroup courseId={course.id} canJoin={canWatchEverything} onBuy={goToCheckout} />
+          )}
+          <div className="rd-clist-head">
+            <h2>Waxa koorsada ku jira</h2>
+            <span>{syllabus.length} qaybood · {lessons.length} cashar</span>
+          </div>
+          {syllabusQuery.isPending ? (
+            <Spinner label="Casharrada ayaa la soo saarayaa…" />
+          ) : syllabusQuery.isError ? (
+            <ErrorMessage error={syllabusQuery.error} onRetry={() => syllabusQuery.refetch()} />
+          ) : syllabus.length === 0 ? (
+            <p className="muted">Casharrada dhawaan ayaa la soo gelinayaa.</p>
+          ) : (
+            <div className="rd-modules">
+              {syllabus.map((mod, i) => (
+                <details key={mod.id} className="rd-module" open={i < 2}>
+                  <summary>
+                    <span className="rd-module-num">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="rd-module-text">
+                      <span className="rd-module-title">{mod.title}</span>
+                      <span className="rd-module-meta">{mod.lessons.length} cashar</span>
+                    </span>
+                    <span className="rd-module-toggle" aria-hidden>
+                      <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></svg>
+                    </span>
+                  </summary>
                   <ul>
                     {mod.lessons.map((lesson) => {
                       const watchable = canWatchEverything || lesson.is_preview;
                       return (
                         <li key={lesson.id}>
-                          {/* The WHOLE row is the click target — tap anywhere
-                              to watch (or to unlock when locked). */}
                           <button
                             type="button"
-                            className={`syllabus-lesson ${
-                              watchable ? "" : "syllabus-lesson-locked"
-                            }`}
-                            onClick={() =>
-                              watchable ? goToLesson(lesson.id) : goToCheckout()
-                            }
-                            title={
-                              watchable
-                                ? "Watch this lesson"
-                                : "Buy the course to unlock this lesson"
-                            }
+                            className={`rd-lesson ${watchable ? "" : "rd-lesson-locked"}`}
+                            onClick={() => (watchable ? goToLesson(lesson.id) : goToCheckout())}
                           >
-                            <span
-                              className={`play-chip ${
-                                watchable ? "" : "play-chip-locked"
-                              }`}
-                              aria-hidden
-                            >
-                              {watchable ? "▶" : "🔒"}
-                            </span>
-                            <span className="syllabus-lesson-title">
-                              {lesson.title}
-                              {lesson.is_preview && !canWatchEverything && (
-                                <span className="badge badge-preview">
-                                  Free preview
-                                </span>
-                              )}
-                            </span>
-                            <span className="syllabus-lesson-right">
-                              {lesson.duration_seconds > 0 && (
-                                <span>{formatDuration(lesson.duration_seconds)}</span>
-                              )}
-                              {watchable ? (
-                                <span className="syllabus-go">Watch ›</span>
-                              ) : (
-                                <span className="syllabus-locktext">Unlock</span>
-                              )}
-                            </span>
+                            <span className="rd-lesson-icon" aria-hidden>{watchable ? "▶" : "🔒"}</span>
+                            <span className="rd-lesson-title">{lesson.title}</span>
+                            {lesson.is_preview && !canWatchEverything && <span className="rd-free">Bilaash</span>}
+                            {lesson.duration_seconds > 0 && (
+                              <span className="rd-lesson-time">{formatDuration(lesson.duration_seconds)}</span>
+                            )}
                           </button>
                         </li>
                       );
                     })}
                   </ul>
-                </div>
-              ))
-            )}
-          </section>
-
-          {!user && (
-            <p className="muted">
-              <Link to="/signup">Create a free account</Link> to watch preview lessons.
-            </p>
+                </details>
+              ))}
+            </div>
           )}
-
-          {course.status === "coming_soon" ? null : canWatchEverything ? (
-            <CourseComments courseId={course.id} currentUserId={user!.id} isAdmin={isAdmin} />
-          ) : (
-            <section className="comments comments-locked">
-              <h2>
-                Su'aalo &amp; Talo <span className="bi-en">Questions &amp; feedback</span>
-              </h2>
-              <p className="muted">
-                🔒 Buy this course to ask questions, report issues, and get replies
-                from the instructor.
-              </p>
-            </section>
+          {!comingSoon && !canWatchEverything && (
+            <p className="rd-paynote">Ku bixi EVC Plus, ZAAD ama Sahal · Weligaa adiga ayay kuu furan tahay</p>
           )}
-        </div>
-
-        {/* ── Right: how to get it (sticky purchase panel) ─────── */}
-        <aside className="purchase-card">
-          <div className="purchase-thumb">
-            {course.thumbnail_url ? (
-              <img src={course.thumbnail_url} alt={course.title} />
-            ) : (
-              <div className="thumb-placeholder" aria-hidden>
-                {course.title.slice(0, 1).toUpperCase()}
-              </div>
-            )}
-          </div>
-
-          <div className="purchase-body">
-            {course.status === "coming_soon" ? (
-              <div className="coming-soon-panel">
-                <div className="coming-soon-badge-big">🔜 GOORDHOW</div>
-                <p>
-                  Koorsadan waxay furmaysaa <strong>Goordhow</strong>. Soo laabo si
-                  aad u iibsato marka la furo!
-                </p>
-              </div>
-            ) : canWatchEverything ? (
-              <>
-                <div className="purchase-owned">✓ Waad iibsatay koorsadan</div>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-lg btn-block"
-                  onClick={() => navigate(`/learn/${course.id}`)}
-                >
-                  ▶ Sii wad barashada
-                </button>
-              </>
-            ) : (
-              <>
-                <span className="purchase-price-label">Lacagta</span>
-                {hasDiscount(course) && (
-                  <div className="purchase-old-row">
-                    <s className="price-old">
-                      {formatPrice(course.compare_at_price!, course.currency)}
-                    </s>
-                    <span className="discount-chip">
-                      -{discountPct(course)}% qiimo dhimis
-                    </span>
-                  </div>
-                )}
-                <div className="purchase-price">
-                  {formatPrice(course.price, course.currency)}
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-lg btn-block"
-                  onClick={goToCheckout}
-                >
-                  {course.price > 0 ? "Iibso koorsada" : "Isku diiwaan geli bilaash"}
-                </button>
-                <p className="purchase-note">
-                  Ku bixi <strong>EVC Plus</strong>, <strong>ZAAD</strong> ama{" "}
-                  <strong>Sahal</strong> — isla markiiba bilow daawashada.
-                </p>
-              </>
-            )}
-
-            {course.status !== "coming_soon" && (
-              <ul className="purchase-features">
-                <li>
-                  <span aria-hidden>🎬</span> {lessonCount} casharo fiidyow ah
-                </li>
-                {totalDuration > 0 && (
-                  <li>
-                    <span aria-hidden>⏱️</span> {formatDuration(totalDuration)} oo casharro ah
-                  </li>
-                )}
-                {previewCount > 0 && !canWatchEverything && (
-                  <li>
-                    <span aria-hidden>👀</span> {previewCount} cashar oo bilaash ah oo la
-                    daawan karo
-                  </li>
-                )}
-                <li>
-                  <span aria-hidden>📱</span> EVC Plus, ZAAD &amp; Sahal waa la aqbalaa
-                </li>
-                <li>
-                  <span aria-hidden>♾️</span> Helitaan joogto ah — waligaa
-                </li>
-              </ul>
-            )}
-          </div>
         </aside>
       </div>
+
+      {!comingSoon && canWatchEverything && (
+        <section className="rd-section">
+          <CourseComments courseId={course.id} currentUserId={user!.id} isAdmin={isAdmin} />
+        </section>
+      )}
+
+      {!comingSoon && !canWatchEverything && (
+        <div className="rd-sticky">
+          <div>
+            <b>{formatPrice(course.price, course.currency)}</b>
+            {discounted && <s>{formatPrice(course.compare_at_price!, course.currency)}</s>}
+          </div>
+          <button type="button" className="rd-btn rd-buy-btn" onClick={goToCheckout}>
+            {isFree ? "Isku diiwaan geli" : "Iibso koorsada"}
+            <span aria-hidden>→</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

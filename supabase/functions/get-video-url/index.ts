@@ -39,14 +39,12 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Visitors without an account send the public anon key: they may only
+    // watch free preview lessons, which is checked below.
     const jwt = authHeader.replace(/^Bearer\s+/i, "");
     const {
       data: { user },
-      error: userError,
     } = await admin.auth.getUser(jwt);
-    if (userError || !user) {
-      return fail(401, "unauthorized", "Please log in to watch lessons.");
-    }
 
     const body = await req.json().catch(() => null);
     const lessonId = body?.lesson_id;
@@ -68,16 +66,22 @@ Deno.serve(async (req: Request) => {
     } | null;
     const published = course?.status === "published" && !course?.deleted_at;
 
+    const freePreview = published && lesson.is_preview === true;
+
+    if (!user) {
+      if (!freePreview) {
+        return fail(401, "unauthorized", "Please log in to watch lessons.");
+      }
+    }
+
     // Entitlement: admin OR (published AND preview) OR (published AND purchased)
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+    const { data: profile } = user
+      ? await admin.from("profiles").select("role").eq("id", user.id).maybeSingle()
+      : { data: null };
     const isAdmin = profile?.role === "admin";
 
-    let allowed = isAdmin || (published && lesson.is_preview === true);
-    if (!allowed && published) {
+    let allowed = isAdmin || freePreview;
+    if (!allowed && published && user) {
       const { data: purchase } = await admin
         .from("purchases")
         .select("id")
@@ -93,10 +97,10 @@ Deno.serve(async (req: Request) => {
       return fail(403, "forbidden", "Purchase this course to watch this lesson.");
     }
 
-    // ── One active device per account (admins exempt) ──────────────────
+    // ── One active device per account (admins and free previews exempt) ──
     // The newest device to open the app claims the slot (user_devices row);
     // playback URLs are only signed for that device.
-    if (!isAdmin) {
+    if (user && !isAdmin && !freePreview) {
       const deviceId = typeof body?.device_id === "string" ? body.device_id : "";
       if (!deviceId) {
         return fail(403, "device_required", "Please refresh the page and try again.");

@@ -6,6 +6,7 @@ import App from "./App";
 import { queryClient } from "./lib/queryClient";
 import { initAuth } from "./stores/authStore";
 import "./index.css";
+import "./redesign.css";
 
 initAuth();
 

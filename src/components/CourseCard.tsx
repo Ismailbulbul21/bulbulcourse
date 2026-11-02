@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Course } from "../types/db";
+import { formatDuration } from "../pages/CourseDetail";
+import CourseCover from "./CourseCover";
 
 export function formatPrice(price: number, currency = "USD"): string {
   if (Number(price) <= 0) return "Bilaash";
@@ -25,56 +27,61 @@ export function discountPct(
   );
 }
 
-export default function CourseCard({ course }: { course: Course }) {
-  const isFree = Number(course.price) <= 0;
+export default function CourseCard({
+  course,
+  preview,
+}: {
+  course: Course;
+  preview?: { id: string; duration_seconds: number };
+}) {
   const discounted = hasDiscount(course);
   const comingSoon = course.status === "coming_soon";
+  const href = `/course/${course.id}`;
+
   return (
-    <Link to={`/course/${course.id}`} className="course-card">
-      <div className="course-thumb">
-        {course.thumbnail_url ? (
-          <img src={course.thumbnail_url} alt="" loading="lazy" />
-        ) : (
-          <div className="thumb-placeholder" aria-hidden>
-            {course.title.slice(0, 1).toUpperCase()}
-          </div>
-        )}
+    <div className="rd-card">
+      <div className="rd-card-media">
+        <Link to={href} tabIndex={-1} aria-hidden>
+          {course.thumbnail_url ? (
+            <img className="rd-card-img" src={course.thumbnail_url} alt="" loading="lazy" />
+          ) : (
+            <CourseCover course={course} />
+          )}
+        </Link>
         {comingSoon ? (
-          <span className="soon-badge">🔜 GOORDHOW</span>
+          <span className="rd-card-badge">Goordhow</span>
         ) : (
-          discounted && (
-            <span className="discount-badge">-{discountPct(course)}%</span>
-          )
+          discounted && <span className="rd-card-badge">-{discountPct(course)}%</span>
         )}
-        {!comingSoon && (
-          <span className="course-thumb-price">
-            {formatPrice(course.price, course.currency)}
-          </span>
+        {preview && (
+          <Link to={href} state={{ playPreview: true }} className="rd-card-play">
+            <span className="rd-play rd-play-sm">
+              <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" /></svg>
+            </span>
+            <span className="rd-card-play-label">
+              Daawo hordhac{preview.duration_seconds > 0 ? ` · ${formatDuration(preview.duration_seconds)}` : ""}
+            </span>
+          </Link>
         )}
       </div>
-      <div className="course-card-body">
-        <span className="badge badge-category">{course.category}</span>
-        <h3 className="course-card-title">{course.title}</h3>
-        <p className="course-card-desc">{course.description}</p>
-        <div className="course-card-footer">
+      <Link to={href} className="rd-card-body">
+        <span className="rd-chip">{course.category === "Mobile" ? "Mobile App" : course.category}</span>
+        <h3>{course.title}</h3>
+        <p>{course.description}</p>
+        <div className="rd-card-foot">
           {comingSoon ? (
-            <span className="course-card-price soon-text">
-              Goordhow ayee soo baxaysaa
-            </span>
+            <span className="rd-price">Dhawaan</span>
           ) : (
-            <span className="course-card-price">
-              Lacagta waa{" "}
+            <span className="rd-price">
               {discounted && (
-                <s className="price-old">
-                  {formatPrice(course.compare_at_price!, course.currency)}
-                </s>
-              )}{" "}
-              {isFree ? "Bilaash" : formatPrice(course.price, course.currency)}
+                <s>{formatPrice(course.compare_at_price!, course.currency)}</s>
+              )}
+              {formatPrice(course.price, course.currency)}
             </span>
           )}
-          <span className="course-card-cta">Fiiri koorsada →</span>
+          <span className="rd-card-cta">Fiiri koorsada →</span>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

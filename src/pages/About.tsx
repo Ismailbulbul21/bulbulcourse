@@ -1,24 +1,16 @@
 /**
  * Ku saabsan aniga — who builds BulbulCourses, and the apps already shipped.
  *
- * Static on purpose: no database, no tables, no admin screen. Editing the
- * array below is the whole workflow, so nothing here can affect courses,
- * payments or purchases.
+ * Static on purpose: no database. Editing the arrays below is the whole
+ * workflow. Download counts and ratings are Google Play's figures from
+ * November 2026; update them by hand when they change.
  *
- * Kept deliberately dense: short copy, chip-style feature tags instead of
- * bullet paragraphs, tight spacing — so the page can be read without much
- * scrolling instead of unfolding into a long scroll of prose.
- *
- * The copy is Somali, and where an app already has its own Somali tagline or
- * names its own features, those exact words are used rather than a fresh
- * translation — so a card reads the way the app itself reads.
- *
- * Each app carries its own brand colour, passed to CSS as --accent, so a
- * card is tinted by the app it is describing rather than by the site.
+ * Each app carries its own brand colour, passed to CSS as --a, so a card is
+ * tinted by the app it describes rather than by the site.
  */
 import type { CSSProperties } from "react";
+import { Link } from "react-router-dom";
 
-/** Shown in the hero. Change these lines to change it everywhere. */
 const ME = {
   name: "Ismail Bulbul",
   role: "Horumariye Mobile Apps & Websites",
@@ -30,127 +22,131 @@ const ME = {
 type App = {
   name: string;
   tagline: string;
-  /** One short sentence — not a paragraph. */
-  what: string;
-  /** Short tags (2-4 words), not sentences — rendered as chips, not a bullet list. */
-  features: string[];
-  /** Real launcher icon, resized to 256px — see public/apps/. */
   icon: string;
-  /** RGB triple from the app's own icon. Not hex: it is used inside rgb() with an alpha. */
+  /** RGB triple from the app's own icon, used inside rgb() with an alpha. */
   accent: string;
-  /** Left out when the app has no public listing yet. */
-  store?: { label: string; url: string };
-  status?: string;
+  stats: string[];
+  features: string[];
+  store?: string;
 };
+
+const play = (id: string) => `https://play.google.com/store/apps/details?id=${id}`;
 
 const APPS: App[] = [
   {
     name: "Qorsheyn",
-    tagline: "Qorshaha maalinlaha ah, dhammaantii af Soomaali ku qoran",
+    tagline: "Qorshaha maalinlaha ah: hawl, hadaf iyo xusuusin",
     icon: "/apps/qorsheyn.png",
     accent: "108 59 214",
-    what: "Qorshaha maalinlaha ah — hawl, hadaf iyo xusuusin, dhammaantii af Soomaali ah.",
-    features: ["Hawlaha Maanta", "Hadafyo & Xusuusin", "Waqti Feejignaan", "EVC · ZAAD · Sahal"],
-    store: {
-      label: "Google Play",
-      url: "https://play.google.com/store/apps/details?id=com.productivityapp.abaabulka",
-    },
-  },
-  {
-    name: "Socod",
-    tagline: "Ku socod. Ku tartam. Ku guuleyso.",
-    icon: "/apps/socod.png",
-    accent: "70 24 146",
-    what: "Tallaabooyinkaaga si toos ah buu u tiriyaa, kuna tartamaa saaxiibadaa.",
-    features: ["Tallaabo Toos ah", "Liis Hogaamin", "Kooxo", "Calaamado"],
-    store: {
-      label: "Google Play",
-      url: "https://play.google.com/store/apps/details?id=com.socodapp.walking",
-    },
+    stats: ["5K+ soo dejin", "4.5★"],
+    features: ["Hawlaha Maanta", "Hadafyo", "Xusuusin", "Waqti Feejignaan"],
+    store: play("com.productivityapp.abaabulka"),
   },
   {
     name: "JirDhis",
     tagline: "Jimicsi guriga iyo gym, Soomaali ku qoran",
     icon: "/apps/jirdhis.png",
     accent: "11 91 245",
-    what: "In ka badan 150 jimicsi, Soomaali ku sharraxan, muuqaal la socda.",
-    features: ["150+ Jimicsi", "8 Qaybood", "Guri iyo Gym", "Muuqaal + Animation"],
+    stats: ["1K+ soo dejin", "4.3★"],
+    features: ["150+ Jimicsi", "Qorshe Toddobaadle", "Kaloori AI"],
+    store: play("com.jirdhis.app"),
   },
   {
     name: "Baro-Ai",
     tagline: "Casharradaada u beddel hab waxbarasho",
     icon: "/apps/baro-ai.png",
     accent: "22 163 74",
-    what: "PDF, sawir ama qoraal — wuxuu kaaga dhigaa hage, kaarar iyo imtixaan.",
-    features: ["Guudmar", "Macallin AI", "Kaarka", "Imtixaan", "Cod"],
-    status: "Dhawaan",
+    stats: ["Cusub"],
+    features: ["Guudmar", "Macallin AI", "Kaarka", "Imtixaan"],
+    store: play("so.baroai.app"),
+  },
+  {
+    name: "BaroHub",
+    tagline: "Baro Ingiriisi: koorsooyin iyo ku hadal toos ah",
+    icon: "/apps/barohub.png",
+    accent: "20 150 220",
+    stats: ["1K+ soo dejin", "5.0★"],
+    features: ["Koorsooyin", "Imtixaan", "Hadal Toos ah", "EVC · ZAAD"],
+    store: play("com.barohub.app"),
+  },
+  {
+    name: "Socod",
+    tagline: "Ku socod. Ku tartam. Ku guuleyso.",
+    icon: "/apps/socod.png",
+    accent: "92 38 170",
+    stats: ["500+ soo dejin"],
+    features: ["Tallaabo Toos ah", "Liis Hogaamin", "Kooxo"],
+    store: play("com.socodapp.walking"),
+  },
+  {
+    name: "AqoonMaal",
+    tagline: "Casharro muuqaal ah oo ardayda Soomaaliyeed",
+    icon: "/apps/aqoonmaal.png",
+    accent: "30 52 130",
+    stats: ["100+ soo dejin"],
+    features: ["Casharro Muuqaal", "Horumar", "Group Fasal"],
+    store: play("com.aqoonmaal.app"),
   },
 ];
 
 export default function About() {
   return (
-    <div className="page about-page">
-      <section className="about-hero">
-        <div className="about-glow" aria-hidden="true" />
-        <p className="about-eyebrow">Ku saabsan aniga</p>
-        <h1 className="about-name">{ME.name}</h1>
-        <div className="about-pills">
-          <span className="about-pill">{ME.role}</span>
-          <span className="about-pill">{ME.place}</span>
-          <span className="about-pill">{ME.education}</span>
+    <div className="rd ab">
+      <section className="rd-hero ab-hero">
+        <span className="rd-glow rd-glow-a" />
+        <span className="rd-glow rd-glow-b" />
+        <div className="ab-hero-grid">
+          <div>
+            <span className="rd-eyebrow"><i />Ku saabsan aniga</span>
+            <h1>{ME.name}</h1>
+            <p className="ab-role">{ME.role}</p>
+            <div className="ab-pills">
+              <span>{ME.place}</span>
+              <span>{ME.education}</span>
+            </div>
+            <div className="ab-stats">
+              <div><b>7+</b><span>apps la daabacay</span></div>
+              <div><b>8,600+</b><span>soo dejin Google Play</span></div>
+              <div><b>2024</b><span>ilaa hadda</span></div>
+            </div>
+            <div className="rd-actions">
+              <a href={`mailto:${ME.email}`} className="rd-btn rd-btn-primary">Ila soo xiriir</a>
+              <Link to="/" className="rd-btn rd-btn-ghost">Fiiri koorsooyinka</Link>
+            </div>
+          </div>
+          <div className="ab-collage" aria-hidden>
+            {APPS.map((app) => (
+              <img key={app.name} src={app.icon} alt="" width={96} height={96} />
+            ))}
+          </div>
         </div>
-        <p className="about-lead">
-          Waxaan sameeyaa mobile apps iyo websites, waxaanan ka qalin-jebiyay
-          Jaamacadda SIMAD.
-        </p>
       </section>
 
-      <section className="about-section">
-        <h2 className="about-h2">Apps-ka aan sameeyay</h2>
-        <div className="about-apps">
+      <section className="rd-section">
+        <div className="rd-section-head">
+          <h2>Apps-ka aan sameeyay</h2>
+          <p>Kuwan oo dhan kaligay ayaan dhisay, kuna jira Google Play.</p>
+        </div>
+        <div className="ab-apps">
           {APPS.map((app) => (
-            <article
-              key={app.name}
-              className="app-card"
-              style={{ "--accent": app.accent } as CSSProperties}
-            >
-              <div className="app-card-wash" aria-hidden="true" />
-
-              <header className="app-card-top">
-                <img
-                  className="app-icon"
-                  src={app.icon}
-                  alt={`Astaanta appka ${app.name}`}
-                  width={56}
-                  height={56}
-                  loading="lazy"
-                />
-                <div className="app-id">
-                  <h3 className="app-name">{app.name}</h3>
-                  <p className="app-tagline">{app.tagline}</p>
+            <article key={app.name} className="ab-app" style={{ "--a": app.accent } as CSSProperties}>
+              <header>
+                <img src={app.icon} alt={`Astaanta ${app.name}`} width={58} height={58} loading="lazy" />
+                <div>
+                  <h3>{app.name}</h3>
+                  <div className="ab-app-stats">
+                    {app.stats.map((s) => <span key={s}>{s}</span>)}
+                  </div>
                 </div>
-                {app.status && <span className="app-status">{app.status}</span>}
               </header>
-
-              <p className="app-what">{app.what}</p>
-
-              <div className="app-chips">
-                {app.features.map((f) => (
-                  <span key={f} className="app-chip">
-                    {f}
-                  </span>
-                ))}
+              <p>{app.tagline}</p>
+              <div className="ab-chips">
+                {app.features.map((f) => <span key={f}>{f}</span>)}
               </div>
-
               {app.store && (
-                <a
-                  className="app-store"
-                  href={app.store.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Ka soo deji {app.store.label}
-                  <span aria-hidden="true">→</span>
+                <a className="ab-store" href={app.store} target="_blank" rel="noreferrer">
+                  <svg viewBox="0 0 24 24" aria-hidden><path d="M4 3.5v17l9-8.5zM14.5 13.5l2.6 2.5-11 6.2zM14.5 10.5l-8.4-8.7 11 6.2zM18.3 8.9l2.9 1.7c.9.5.9 1.8 0 2.3l-2.9 1.7-2.8-2.8z" /></svg>
+                  Ka soo deji Google Play
                 </a>
               )}
             </article>
@@ -158,23 +154,13 @@ export default function About() {
         </div>
       </section>
 
-      <section className="about-section">
-        <div className="about-bottom">
-          <div className="about-platform">
-            <h2>BulbulCourses</h2>
-            <p>
-              Meesha aan ku baro waxa aan aqaano — koorsooyin af Soomaali ah,
-              lagu iibsado lacagta mobilada, kuuna xasuusta meeshii aad ka
-              joogsatay.
-            </p>
+      <section className="rd-section">
+        <div className="ab-contact">
+          <div>
+            <h2>Ma waxaad dhisaysaa wax?</h2>
+            <p>Su'aal ama mashruuc, igu soo qor.</p>
           </div>
-          <div className="about-contact">
-            <h2>Ila soo xiriir</h2>
-            <p>Ma waxaad dhisaysaa wax, mise su'aal ayaad qabtaa?</p>
-            <a className="about-mail" href={`mailto:${ME.email}`}>
-              {ME.email}
-            </a>
-          </div>
+          <a href={`mailto:${ME.email}`} className="rd-btn rd-btn-primary">{ME.email}</a>
         </div>
       </section>
     </div>

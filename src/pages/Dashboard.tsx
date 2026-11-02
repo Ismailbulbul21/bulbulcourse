@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { PurchaseService } from "../services/purchases.service";
 import { LessonService } from "../services/lessons.service";
 import { ProgressService } from "../services/progress.service";
+import { WhatsAppService } from "../services/whatsapp.service";
 import { useAuthStore } from "../stores/authStore";
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
@@ -22,6 +23,12 @@ export default function Dashboard() {
   const lessonCountsQuery = useQuery({
     queryKey: ["lesson-counts", courseIds],
     queryFn: () => LessonService.countByCourse(courseIds),
+    enabled: courseIds.length > 0,
+  });
+
+  const whatsappQuery = useQuery({
+    queryKey: ["whatsapp-links", courseIds],
+    queryFn: () => WhatsAppService.linksFor(courseIds),
     enabled: courseIds.length > 0,
   });
 
@@ -91,9 +98,21 @@ export default function Dashboard() {
                         ? `${completed} of ${total} lessons completed`
                         : "No lessons yet"}
                     </p>
-                    <Link to={`/learn/${course.id}`} className="btn btn-primary">
-                      {completed === 0 ? "Start course" : "Continue →"}
-                    </Link>
+                    <div className="dashboard-actions">
+                      <Link to={`/learn/${course.id}`} className="btn btn-primary">
+                        {completed === 0 ? "Start course" : "Continue →"}
+                      </Link>
+                      {whatsappQuery.data?.[course.id] && (
+                        <a
+                          href={whatsappQuery.data[course.id]}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="rd-wa-btn"
+                        >
+                          Group-ka WhatsApp
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
