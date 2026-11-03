@@ -16,6 +16,7 @@ import CourseCreate from "./pages/admin/CourseCreate";
 import CourseEditor from "./pages/admin/CourseEditor";
 import LessonEditor from "./pages/admin/LessonEditor";
 import About from "./pages/About";
+import Community from "./pages/Community";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="reset-password" element={<ResetPassword />} />
         <Route path="about" element={<About />} />
+        <Route path="community" element={<Community />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<Dashboard />} />

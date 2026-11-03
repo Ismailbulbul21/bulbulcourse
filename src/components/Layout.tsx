@@ -22,6 +22,7 @@ export default function Layout() {
           <NavLink to="/" end>
             Koorsooyinka
           </NavLink>
+          <NavLink to="/community">Bulshada</NavLink>
           <NavLink to="/about">Aniga</NavLink>
           {user && <NavLink to="/dashboard">Waxbarashadayda</NavLink>}
           {isAdmin && <NavLink to="/admin">Admin</NavLink>}

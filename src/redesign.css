@@ -265,6 +265,39 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
 
 .rd-sticky { display: none; }
 
+/* ── Community (Bulshada) ─────────────────────────────────── */
+.cm-hero {
+  text-align: center; padding: 3rem 1.6rem; border-radius: 28px;
+  background: linear-gradient(160deg, #e9fbf0, #fff 60%); border: 1px solid #c4f0d5;
+  box-shadow: 0 24px 50px -30px rgba(22,163,74,.45);
+}
+.cm-icon { display: inline-grid; place-items: center; width: 72px; height: 72px; border-radius: 22px; background: #25d366; box-shadow: 0 14px 28px -10px rgba(37,211,102,.9); }
+.cm-icon svg { width: 40px; height: 40px; fill: #fff; }
+.cm-hero h1 { font-family: "Sora", "Plus Jakarta Sans", sans-serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; margin: 1.1rem 0 .6rem; }
+.cm-hero p { max-width: 520px; margin: 0 auto; font-size: 1.05rem; color: var(--rd-body); }
+.cm-join {
+  display: inline-flex; align-items: center; gap: .6rem; margin-top: 1.6rem;
+  padding: 1rem 1.8rem; border-radius: 16px; font-weight: 800; font-size: 1.1rem;
+  color: #fff !important; background: #1faa53; text-decoration: none !important;
+  box-shadow: 0 14px 30px -10px rgba(22,163,74,.75);
+  transition: transform .15s ease, background .15s ease;
+}
+.cm-join:hover { background: #178a43; transform: translateY(-2px); }
+.cm-join svg { width: 24px; height: 24px; fill: #fff; }
+.cm-join-soon { background: #e2e5ee; color: var(--rd-muted) !important; box-shadow: none; }
+.cm-join-soon:hover { background: #e2e5ee; transform: none; }
+
+.cm-perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.cm-perk { background: #fff; border: 1px solid var(--rd-line); border-radius: 20px; padding: 1.3rem; }
+.cm-perk b { font-size: 1.7rem; }
+.cm-perk h3 { margin: .6rem 0 .2rem; font-size: 1.05rem; font-weight: 800; }
+.cm-perk p { margin: 0; font-size: .9rem; }
+
+.cm-rules { background: #fff; border: 1px solid var(--rd-line); border-radius: 20px; padding: 1.4rem 1.6rem; }
+.cm-rules h2 { margin: 0 0 .7rem; font-size: 1.2rem; font-weight: 800; }
+.cm-rules li { padding: .35rem 0 .35rem 1.6rem; position: relative; }
+.cm-rules li::before { content: "✓"; position: absolute; left: 0; color: #1faa53; font-weight: 800; }
+
 /* ── About (Aniga) ────────────────────────────────────────── */
 /* White version of the hero card, with dark text. */
 .ab-hero { background: #fff; color: var(--rd-ink); border: 1px solid var(--rd-line); box-shadow: 0 24px 50px -30px rgba(79,70,229,.35); }
@@ -331,6 +364,7 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
   .ab-hero-grid { grid-template-columns: 1fr; }
   .ab-collage { display: none; }
   .ab-apps { grid-template-columns: repeat(2, 1fr); }
+  .cm-perks { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 600px) {
   .rd-hero { padding: 2rem 1.3rem; border-radius: 22px; }
@@ -345,6 +379,8 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
   .rd-maker { flex-direction: column; align-items: flex-start; }
   .rd-top-head h1 { font-size: 1.5rem; }
   .ab-apps { grid-template-columns: 1fr; }
+  .cm-hero { padding: 2.2rem 1.2rem; }
+  .cm-join { width: 100%; justify-content: center; }
   .ab-stats { gap: 1rem 1.6rem; }
   .ab-stats b { font-size: 1.3rem; }
   .ab-contact .rd-btn { width: 100%; }
