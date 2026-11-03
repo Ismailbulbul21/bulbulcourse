@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import type { Course } from "../types/db";
 import { formatDuration } from "../pages/CourseDetail";
@@ -37,9 +38,10 @@ export default function CourseCard({
   const discounted = hasDiscount(course);
   const comingSoon = course.status === "coming_soon";
   const href = `/course/${course.id}`;
+  const color = course.category === "Mobile" ? "109 74 255" : "37 132 255";
 
   return (
-    <div className="rd-card">
+    <div className="rd-card" style={{ "--c": color } as CSSProperties}>
       <div className="rd-card-media">
         <Link to={href} tabIndex={-1} aria-hidden>
           {course.thumbnail_url ? (

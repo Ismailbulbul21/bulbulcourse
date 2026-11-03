@@ -63,14 +63,6 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
 .rd-section-head p { color: var(--rd-muted); margin: .3rem 0 0; }
 
 .rd-top-head h1 { font-size: 1.9rem; font-weight: 800; margin: 0; }
-.rd-strip {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2.4rem;
-  padding: 1.3rem 1.6rem; border-radius: 22px; background: var(--rd-night); color: #fff;
-  background-image: radial-gradient(500px 200px at 90% 0%, rgba(109,74,255,.45), transparent 70%);
-}
-.rd-strip b { display: block; font-size: 1.2rem; font-weight: 800; }
-.rd-strip span { color: rgba(255,255,255,.6); font-size: .84rem; }
-.rd-strip .rd-btn { margin-left: auto; }
 
 .rd-chip { display: inline-flex; align-items: center; font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--rd-violet); background: #efebff; border-radius: 99px; padding: .25rem .7rem; }
 .rd-chip-dark { color: #d9d3ff; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); }
@@ -87,13 +79,25 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
 
 /* ── Course cards ─────────────────────────────────────────── */
 .rd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.4rem; }
+/* Each card carries its course colour through --c (an "R G B" triple). */
 .rd-card {
-  display: flex; flex-direction: column; overflow: hidden; border-radius: 22px;
-  background: #fff; border: 1px solid var(--rd-line); color: inherit; text-decoration: none !important;
-  box-shadow: 0 1px 2px rgba(20,22,50,.04), 0 12px 30px -18px rgba(20,22,50,.25);
-  transition: transform .2s ease, box-shadow .2s ease;
+  --c: 109 74 255;
+  display: flex; flex-direction: column; overflow: hidden; border-radius: 24px;
+  background: linear-gradient(180deg, #fff 40%, rgb(var(--c) / .07));
+  border: 2px solid rgb(var(--c) / .22); color: inherit; text-decoration: none !important;
+  box-shadow: 0 1px 2px rgba(20,22,50,.04), 0 16px 34px -20px rgb(var(--c) / .55);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
-.rd-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -22px rgba(79,70,229,.45); }
+.rd-card:hover { transform: translateY(-4px); border-color: rgb(var(--c) / .55); box-shadow: 0 26px 50px -22px rgb(var(--c) / .7); }
+.rd-card .rd-chip { color: #fff; background: rgb(var(--c)); }
+.rd-card-body h3 { font-family: "Sora", "Plus Jakarta Sans", sans-serif; letter-spacing: -0.02em; }
+.rd-card .rd-price { font-family: "Sora", "Plus Jakarta Sans", sans-serif; color: rgb(var(--c)); }
+.rd-card .rd-card-foot { border-top: 1px dashed rgb(var(--c) / .3); }
+.rd-card .rd-card-cta {
+  color: #fff; background: rgb(var(--c)); padding: .5rem 1rem; border-radius: 12px;
+  box-shadow: 0 8px 18px -8px rgb(var(--c) / .9); transition: transform .15s ease;
+}
+.rd-card:hover .rd-card-cta { transform: translateX(3px); }
 .rd-card-media { position: relative; }
 .rd-card-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; display: block; background: #eef0f7; }
 .rd-card-badge { position: absolute; top: 12px; left: 12px; background: #fff; color: var(--rd-ink); font-weight: 800; font-size: .8rem; padding: .25rem .65rem; border-radius: 99px; }
@@ -262,8 +266,21 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
 .rd-sticky { display: none; }
 
 /* ── About (Aniga) ────────────────────────────────────────── */
+/* White version of the hero card, with dark text. */
+.ab-hero { background: #fff; color: var(--rd-ink); border: 1px solid var(--rd-line); box-shadow: 0 24px 50px -30px rgba(79,70,229,.35); }
+.ab-hero .rd-glow-a { background: radial-gradient(circle, rgba(109,74,255,.18), rgba(109,74,255,0) 68%); }
+.ab-hero .rd-glow-b { background: radial-gradient(circle, rgba(47,123,255,.14), rgba(47,123,255,0) 68%); }
+.ab-hero .rd-eyebrow { color: var(--rd-violet); background: #f1edff; border-color: #e1d9ff; }
+.ab-hero h1 { color: var(--rd-ink); }
+.ab-hero .ab-role { color: var(--rd-violet); }
+.ab-hero .ab-pills span { color: var(--rd-body); background: #f4f5fa; border-color: var(--rd-line); }
+.ab-hero .ab-stats b { color: var(--rd-ink); }
+.ab-hero .ab-stats span { color: var(--rd-muted); }
+.ab-hero .rd-btn-ghost { color: var(--rd-ink); background: #fff; border: 1px solid #d9dbea; }
+.ab-hero .rd-btn-ghost:hover { color: var(--rd-ink); background: #f4f5fa; }
+.ab-hero .ab-collage img { box-shadow: 0 16px 30px -10px rgba(20,22,50,.35); }
 .ab-hero-grid { display: grid; grid-template-columns: 1fr 300px; gap: 2.5rem; align-items: center; }
-.ab-hero h1 { color: #fff; font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; margin: 1rem 0 .3rem; letter-spacing: -0.03em; }
+.ab-hero h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; margin: 1rem 0 .3rem; letter-spacing: -0.03em; }
 .ab-role { font-size: 1.1rem; font-weight: 600; color: #b9adff; margin: 0; }
 .ab-pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
 .ab-pills span { font-size: .85rem; font-weight: 600; color: rgba(255,255,255,.85); background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 99px; padding: .3rem .8rem; }
@@ -333,7 +350,6 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
   .ab-contact .rd-btn { width: 100%; }
   .rd-wa { flex-wrap: wrap; }
   .rd-wa-btn { width: 100%; text-align: center; }
-  .rd-strip .rd-btn { margin-left: 0; width: 100%; }
   .rd-ch { margin-bottom: 1rem; }
   .rd-ch-buy { display: none; }
   .rd-course { padding-bottom: 5rem; }

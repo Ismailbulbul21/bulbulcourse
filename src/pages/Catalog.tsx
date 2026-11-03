@@ -55,7 +55,6 @@ export default function Catalog() {
 
   const filtering = Boolean(search) || category !== "All";
   const showFilters = filtering || (coursesQuery.data?.total ?? 0) > SHOW_FILTERS_ABOVE;
-  const firstCourse = coursesQuery.data?.courses[0];
 
   return (
     <div className="rd">
@@ -115,19 +114,6 @@ export default function Catalog() {
             />
           </>
         )}
-      </section>
-
-      <section className="rd-section">
-        <div className="rd-strip">
-          <div><b>7+</b><span>apps aan dhisay</span></div>
-          <div><b>8,600+</b><span>soo dejin Google Play</span></div>
-          <div><b>EVC · ZAAD · Sahal</b><span>ku bixi taleefankaaga</span></div>
-          {firstCourse && (
-            <Link to={`/course/${firstCourse.id}#preview`} className="rd-btn rd-btn-primary">
-              ▶ Daawo cashar bilaash ah
-            </Link>
-          )}
-        </div>
       </section>
 
       <section className="rd-section">
