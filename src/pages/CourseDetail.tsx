@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, type CSSProperties } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CourseService } from "../services/courses.service";
@@ -10,6 +10,19 @@ import PreviewPlayer from "../components/PreviewPlayer";
 import WhatsAppGroup from "../components/WhatsAppGroup";
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
+
+/** One colour per module (RGB triples), repeating after the last one. */
+const MODULE_COLORS = [
+  "109 74 255",
+  "37 132 255",
+  "16 170 120",
+  "245 140 20",
+  "230 60 110",
+  "20 160 190",
+  "140 80 230",
+  "225 90 50",
+  "60 90 200",
+];
 
 export function formatDuration(totalSeconds: number): string {
   if (!totalSeconds || totalSeconds <= 0) return "";
@@ -142,7 +155,12 @@ export default function CourseDetail() {
           ) : (
             <div className="rd-modules">
               {syllabus.map((mod, i) => (
-                <details key={mod.id} className="rd-module" open={i < 2}>
+                <details
+                  key={mod.id}
+                  className="rd-module"
+                  open={i < 2}
+                  style={{ "--m": MODULE_COLORS[i % MODULE_COLORS.length] } as CSSProperties}
+                >
                   <summary>
                     <span className="rd-module-num">{String(i + 1).padStart(2, "0")}</span>
                     <span className="rd-module-text">

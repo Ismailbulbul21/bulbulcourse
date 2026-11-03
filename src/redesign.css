@@ -218,20 +218,32 @@ body { font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Aria
 .rd-module { background: #fff; border: 1px solid var(--rd-line); border-radius: 18px; overflow: hidden; }
 .rd-module summary { display: flex; align-items: center; gap: .8rem; padding: .85rem 1.1rem; cursor: pointer; list-style: none; }
 .rd-module summary::-webkit-details-marker { display: none; }
-.rd-module summary:hover { background: #faf9ff; }
-.rd-module-num { font-weight: 800; color: var(--rd-violet); font-size: .85rem; background: #efebff; border-radius: 10px; padding: .25rem .5rem; flex: none; }
-.rd-module-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.rd-module-title { font-weight: 700; color: var(--rd-ink); }
-.rd-module-meta { font-size: .8rem; color: var(--rd-muted); }
+/* Each module gets its own colour through --m (an "R G B" triple). */
+.rd-module { --m: 109 74 255; border-left: 5px solid rgb(var(--m)); }
+.rd-module summary { background: linear-gradient(90deg, rgb(var(--m) / .09), rgb(var(--m) / 0) 70%); }
+.rd-module summary:hover { background: linear-gradient(90deg, rgb(var(--m) / .15), rgb(var(--m) / .02) 70%); }
+.rd-module-num {
+  flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px;
+  font-weight: 800; font-size: .95rem; color: #fff; background: rgb(var(--m));
+  box-shadow: 0 6px 14px -6px rgb(var(--m) / .9);
+}
+.rd-module-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
+.rd-module-title { font-weight: 800; font-size: 1.04rem; color: var(--rd-ink); letter-spacing: -0.01em; }
+.rd-module-meta { font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgb(var(--m)); }
 .rd-module-toggle {
   flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--rd-violet), var(--rd-blue)); box-shadow: 0 6px 14px -6px rgba(109,74,255,.8);
+  background: rgb(var(--m)); box-shadow: 0 6px 14px -6px rgb(var(--m) / .9);
   transition: transform .2s ease;
 }
 .rd-module-toggle svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.rd-module[open] .rd-module-toggle { transform: rotate(180deg); background: #efebff; box-shadow: none; }
-.rd-module[open] .rd-module-toggle svg { stroke: var(--rd-violet); }
-.rd-module:not([open]) { border-color: #ddd5ff; }
+.rd-module[open] .rd-module-toggle { transform: rotate(180deg); background: rgb(var(--m) / .14); box-shadow: none; }
+.rd-module[open] .rd-module-toggle svg { stroke: rgb(var(--m)); }
+.rd-module:not([open]) { border-color: rgb(var(--m) / .3); border-left-color: rgb(var(--m)); }
+.rd-module .rd-lesson-icon { background: rgb(var(--m) / .12); color: rgb(var(--m)); }
+.rd-module .rd-lesson-locked .rd-lesson-icon { background: #f3f4f8; }
+.rd-module .rd-lesson-title { font-weight: 500; color: var(--rd-body); }
+.rd-module .rd-lesson:not(.rd-lesson-locked) .rd-lesson-title { color: var(--rd-ink); font-weight: 600; }
+.rd-module .rd-lesson:hover { background: rgb(var(--m) / .05); }
 .rd-module ul { border-top: 1px solid var(--rd-line); }
 .rd-lesson { width: 100%; display: flex; align-items: center; gap: .8rem; padding: .8rem 1.2rem; background: none; border: 0; border-bottom: 1px solid #f1f2f7; cursor: pointer; font: inherit; color: var(--rd-ink); text-align: left; }
 .rd-module li:last-child .rd-lesson { border-bottom: 0; }
