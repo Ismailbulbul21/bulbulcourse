@@ -40,8 +40,8 @@ export default function Community() {
         <span className="cm-glow" aria-hidden />
         <div className="cm-hero-text">
           <span className="cm-eyebrow"><i />Group WhatsApp · Bilaash</span>
-          <h1>Kaligaa ha baran. <em>Nagu soo biir.</em></h1>
-          <p>Group bilaash ah oo lagu barto apps, websites iyo AI.</p>
+          <h1>Bulshada <em>BulbulCourses</em></h1>
+          <p>Meel dadku ku wada hadlaan, isna caawiyaan.</p>
           <JoinButton />
         </div>
 
