@@ -920,8 +920,19 @@ input[type="file"] { border: none; padding: 0.25rem 0; box-shadow: none; }
   .editor-panel { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
+  /* Nothing may make the page wider than the phone. */
+  body { overflow-x: clip; }
   .navbar { flex-wrap: wrap; gap: 0.5rem; padding: 0.7rem 1rem; }
-  .nav-links { order: 3; flex: 1 1 100%; }
+  /* With every tab showing (admin), tabs wrap onto a second line instead of widening the page. */
+  .nav-links { order: 3; flex: 1 1 100%; min-width: 0; flex-wrap: wrap; gap: 0.35rem 1rem; }
+  .nav-links a { white-space: nowrap; }
+  .page-header, .status-banner, .publish-actions, .curriculum-lesson { flex-wrap: wrap; }
+  .publish-actions .btn { flex: 1 1 100%; }
+  .tabs { max-width: 100%; overflow-x: auto; }
+  .curriculum-lesson-title { flex: 1 1 100%; }
+  .curriculum-add-module { flex-wrap: wrap; }
+  .curriculum-add-module .btn { flex: 1 1 100%; }
+  .admin-grid, .dashboard-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .stat-row { grid-template-columns: 1fr; }
   .main { padding: 1.25rem 0.9rem 3rem; }
