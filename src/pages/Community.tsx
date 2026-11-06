@@ -1,20 +1,9 @@
 /**
  * Bulshada — the open community group. Anyone can join, so the invite link
  * lives here in code (unlike the buyers-only course groups in the database).
- * If the link is emptied, the join buttons show "Dhawaan" instead.
+ * If the link is emptied, the join button shows "Dhawaan" instead.
  */
-import type { CSSProperties } from "react";
-
 const COMMUNITY_URL = "https://chat.whatsapp.com/CWHSPnKjH0DEb2uF0gsgU8";
-
-const PERKS = [
-  { icon: "🙋", color: "109 74 255", title: "Su'aal weydii" },
-  { icon: "🛠️", color: "245 140 20", title: "Caawimaad hel" },
-  { icon: "🚀", color: "37 132 255", title: "Shaqadaada tus" },
-  { icon: "🤖", color: "16 170 120", title: "Wararka AI" },
-];
-
-const RULES = ["Is ixtiraam", "Xayeysiis ma jiro", "Tech oo kaliya"];
 
 const WA_ICON = (
   <svg viewBox="0 0 24 24" aria-hidden>
@@ -22,72 +11,22 @@ const WA_ICON = (
   </svg>
 );
 
-function JoinButton() {
-  return COMMUNITY_URL ? (
-    <a className="cm-join" href={COMMUNITY_URL} target="_blank" rel="noreferrer">
-      {WA_ICON}
-      Ku biir Group-ka
-    </a>
-  ) : (
-    <span className="cm-join cm-join-soon">Dhawaan</span>
-  );
-}
-
 export default function Community() {
   return (
-    <div className="rd cm">
-      <section className="cm-hero">
-        <span className="cm-glow" aria-hidden />
-        <div className="cm-hero-text">
-          <span className="cm-eyebrow"><i />Group WhatsApp · Bilaash</span>
-          <h1>Bulshada <em>BulbulCourses</em></h1>
-          <p>Meel dadku ku wada hadlaan, isna caawiyaan.</p>
-          <JoinButton />
-        </div>
-
-        <div className="cm-chat" aria-hidden>
-          <div className="cm-chat-head">
-            <span className="cm-chat-avatar">{WA_ICON}</span>
-            <div>
-              <b>Bulshada BulbulCourses</b>
-              <span>Waxa lagu wada hadlo</span>
-            </div>
-          </div>
-          <div className="cm-chat-body">
-            <p className="cm-bubble">Node.js sideen u rakibaa?</p>
-            <p className="cm-bubble cm-bubble-me">Casharka 1aad eeg 👍</p>
-            <p className="cm-bubble">Error baa ii soo baxay 😅</p>
-            <p className="cm-bubble cm-bubble-me">Claude u dir, wuu xallinayaa</p>
-            <p className="cm-bubble">App-kaygii waa diyaar! 🎉</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="rd-section">
-        <div className="cm-perks">
-          {PERKS.map((p) => (
-            <div key={p.title} className="cm-perk" style={{ "--p": p.color } as CSSProperties}>
-              <b aria-hidden>{p.icon}</b>
-              <h3>{p.title}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="rd-section">
-        <div className="cm-rules">
-          <h2>Xeerarka</h2>
-          <ul>
-            {RULES.map((r) => <li key={r}>{r}</li>)}
-          </ul>
-        </div>
-      </section>
-
-      <section className="rd-section">
-        <div className="cm-final">
-          <h2>Diyaar ma tahay?</h2>
-          <JoinButton />
-        </div>
+    <div className="cm">
+      <section className="cm-card">
+        <span className="cm-icon">{WA_ICON}</span>
+        <h1>Bulshada BulbulCourses</h1>
+        <p>Meel dadku ku wada hadlaan, isna caawiyaan.</p>
+        {COMMUNITY_URL ? (
+          <a className="cm-join" href={COMMUNITY_URL} target="_blank" rel="noreferrer">
+            {WA_ICON}
+            Ku biir Group-ka
+          </a>
+        ) : (
+          <span className="cm-join cm-join-soon">Dhawaan</span>
+        )}
+        <span className="cm-note">Bilaash · Qof walba waa soo dhaweyn yahay</span>
       </section>
     </div>
   );
