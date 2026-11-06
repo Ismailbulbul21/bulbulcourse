@@ -16,8 +16,8 @@ export default function Community() {
     <div className="cm">
       <section className="cm-card">
         <span className="cm-icon">{WA_ICON}</span>
-        <h1>Bulshada BulbulCourses</h1>
-        <p>Meel dadku ku wada hadlaan, isna caawiyaan.</p>
+        <h1>Ismail Bulbul</h1>
+        <p>Wada sheekeysi iyo is-caawin.</p>
         {COMMUNITY_URL ? (
           <a className="cm-join" href={COMMUNITY_URL} target="_blank" rel="noreferrer">
             {WA_ICON}
@@ -26,7 +26,7 @@ export default function Community() {
         ) : (
           <span className="cm-join cm-join-soon">Dhawaan</span>
         )}
-        <span className="cm-note">Bilaash · Qof walba waa soo dhaweyn yahay</span>
+        <span className="cm-note">Waa bilaash, albaabkuna qof walba wuu u furan yahay.</span>
       </section>
     </div>
   );
